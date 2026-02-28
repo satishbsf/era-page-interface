@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERA — Page Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F8FA;--surface:#fff;--border:#E8ECF0;--border2:#D0D7E0;
+  --txt:#0D1117;--txt2:#4A5568;--txt3:#9AA5B4;
+  --accent:#5B4FE8;--accent2:#EEEAFD;--accent3:#4338CA;
+  --green:#10B981;--green2:#ECFDF5;
+  --red:#EF4444;--red2:#FEF2F2;
+  --orange:#F59E0B;
+  --sh1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --sh2:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+  --sh3:0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+  --sh4:0 24px 64px rgba(0,0,0,.16);
+  --r:8px;--r2:12px;--r3:16px;
+}
+html,body{height:100%;overflow:hidden;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:var(--txt);background:var(--bg)}
+
+/* ── HEADER ── */
+.hdr{height:60px;background:#fff;border-bottom:1px solid #EEEEEE;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 24px;flex-shrink:0;position:relative;z-index:200}
+.hdr-left{display:flex;align-items:center;gap:10px;min-width:0}
+.hdr-center{display:flex;align-items:center;gap:10px;justify-content:center}
+.hdr-right{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+/* ← Chat back button */
+.btn-chat-back{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:500;color:#7A8494;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .13s;white-space:nowrap;flex-shrink:0;letter-spacing:-.1px}
+.btn-chat-back:hover{background:#F4F5F7;color:#0D1117}
+.btn-chat-back svg{flex-shrink:0;opacity:.7}
+.hdr-divider{width:1px;height:16px;background:#E4E7EC;flex-shrink:0}
+/* logo */
+.hdr-logo{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.lmark{width:20px;height:20px;border-radius:5px;background:linear-gradient(135deg,#5B4FE8,#8B7FFF);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.hdr-logo-txt{font-size:11px;font-weight:500;letter-spacing:.2px;color:#B0B7C3}
+/* page name + status */
+.page-info{display:flex;align-items:center;gap:8px;min-width:0}
+.page-nm{font-size:13.5px;font-weight:700;color:#0D1117;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text;border-radius:5px;padding:2px 5px;margin:-2px -5px;transition:background .12s;letter-spacing:-.3px}
+.page-nm:hover{background:#F7F8FA}
+.page-nm:focus{outline:none;background:#F7F8FA;box-shadow:0 0 0 1.5px #5B4FE8}
+.page-nm[contenteditable="true"]{background:#F7F8FA;box-shadow:0 0 0 1.5px #5B4FE8}
+/* status dot */
+.status-dot{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.status-dot-circle{width:6px;height:6px;border-radius:50%;background:#10B981;flex-shrink:0}
+.status-dot-circle.saving{background:#F59E0B;animation:blink 1s ease infinite}
+.status-dot-circle.unsaved{background:#9AA5B4}
+.status-dot-circle.ai{background:#5B4FE8}
+.status-dot-txt{font-size:11px;color:#7A8494;font-weight:500;white-space:nowrap}
+/* segmented control */
+.seg{display:flex;background:#EEEFF2;border-radius:9px;padding:3px;gap:1px;box-shadow:inset 0 1px 2px rgba(0,0,0,.06)}
+.seg-btn{padding:5px 16px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:500;color:#8A94A6;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .13s;letter-spacing:-.1px;white-space:nowrap}
+.seg-btn.active{background:#fff;color:#0D1117;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.seg-btn:not(.active):hover{color:#4A5568}
+/* device icons */
+.dev-grp{display:none;align-items:center;gap:2px;background:#F4F5F7;border-radius:7px;padding:3px;margin-left:8px}
+.dev-grp.visible{display:flex}
+.dev-btn{width:28px;height:26px;border:none;background:transparent;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9AA5B4;transition:all .12s}
+.dev-btn.active{background:#fff;color:#0D1117;box-shadow:0 1px 2px rgba(0,0,0,.07)}
+.dev-btn:not(.active):hover{color:#4A5568}
+/* undo/redo */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .13s;white-space:nowrap;letter-spacing:-.1px}
+.btn:active{transform:scale(.97)}
+.btn svg{flex-shrink:0;width:13px;height:13px}
+.btn-ghost{background:transparent;color:#6B7280;border:none}
+.btn-ghost:hover{background:#F4F5F7;color:#0D1117}
+.btn-ico{width:30px;height:30px;padding:0;border-radius:8px;display:flex;align-items:center;justify-content:center}
+/* autosave text */
+.autosave-txt{font-size:11px;color:#7A8494;font-weight:500;white-space:nowrap;transition:opacity .6s ease}
+.autosave-txt.faded{opacity:.55}
+/* publish */
+.btn-grn{background:#5B4FE8;color:#fff;border:none;border-radius:8px;box-shadow:none}
+.btn-grn:hover{background:#4338CA}
+.btn-out{background:#fff;color:#0D1117;border:1px solid #D0D7E0}
+.btn-out:hover{border-color:#5B4FE8;color:#5B4FE8}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+
+
+/* ── MAIN WRAPPER ── */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* ── CANVAS AREA ── */
+.canvas-area{flex:1;overflow-y:auto;background:#fff;display:flex;flex-direction:column;position:relative}
+.canvas-frame{width:100%;background:#fff;min-height:100%;position:relative}
+.dev-grp{display:flex;align-items:center;gap:2px;background:var(--bg);border-radius:7px;padding:2px}
+.dev-btn{width:28px;height:28px;border-radius:5px;border:none;background:transparent;cursor:pointer;color:var(--txt3);display:flex;align-items:center;justify-content:center;transition:all .12s}
+.dev-btn:hover{color:var(--txt2)}
+.dev-btn.active{background:#fff;color:var(--accent);box-shadow:var(--sh1)}
+
+.ba-btn{padding:4px 12px;border:none;background:transparent;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;color:var(--txt3);border-radius:5px;transition:all .12s;letter-spacing:-.1px}
+.ba-btn.active{background:#fff;color:var(--accent);box-shadow:var(--sh1)}
+
+/* ── SECTION HOVER + SELECT ── */
+.psec{position:relative;transition:all .15s}
+.psec-ring{position:absolute;inset:0;border:1.5px solid transparent;pointer-events:none;transition:all .2s;z-index:10;border-radius:1px}
+.psec:hover .psec-ring{border-color:rgba(91,79,232,.25);background:rgba(91,79,232,.012)}
+.psec.sel .psec-ring{border-color:rgba(91,79,232,.55);background:rgba(91,79,232,.02)}
+/* section label — top-left chip on hover/select */
+.sec-lbl{position:absolute;top:0;left:0;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:0 0 5px 0;z-index:20;pointer-events:none;letter-spacing:.5px;opacity:0;transition:opacity .15s;text-transform:uppercase;font-family:'Inter',-apple-system,sans-serif}
+.psec:hover .sec-lbl,.psec.sel .sec-lbl{opacity:1}
+/* add-below strip */
+.add-strip{height:0;overflow:hidden;transition:height .18s ease;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(180deg,rgba(91,79,232,.04),rgba(91,79,232,.06));border-top:1px dashed rgba(91,79,232,.18)}
+.add-strip.show{height:36px}
+.add-strip-inner{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.2px}
+/* regen skeleton */
+.skel-overlay{position:absolute;inset:0;background:rgba(255,255,255,.88);backdrop-filter:blur(3px);z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.skel-overlay.show{display:flex}
+.skel-spin{width:28px;height:28px;border-radius:50%;border:2px solid rgba(91,79,232,.15);border-top-color:var(--accent);animation:spin .6s linear infinite}
+.skel-txt{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:.3px;animation:pulse 1s ease infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* Fix eb inline display breaking block elements */
+h1.eb, h2.eb, h3.eb, p.eb, .sec-ttl.eb, .sec-sub.eb{display:block}
+.eb{cursor:pointer;border-radius:4px;outline:1.5px solid transparent;outline-offset:1px;transition:all .15s cubic-bezier(.34,1.4,.64,1);position:relative;background:rgba(91,79,232,0)}
+.eb:hover{outline-color:rgba(91,79,232,.4);background:rgba(91,79,232,.06);box-shadow:0 0 0 3px rgba(91,79,232,.08)}
+.eb.sel-txt{outline-color:var(--accent);background:rgba(91,79,232,.12);box-shadow:0 2px 8px rgba(91,79,232,.15)}
+[contenteditable=true]{outline:2px solid var(--accent)!important;outline-offset:2px;cursor:text;border-radius:4px;background:linear-gradient(135deg,rgba(91,79,232,.04),rgba(91,79,232,.02))!important;padding:4px 6px;transition:all .1s ease}
+
+/* ── IMAGE BLOCKS ── */
+.img-block{cursor:pointer;position:relative}
+.img-block::after{content:'';position:absolute;inset:0;border:2px solid transparent;border-radius:4px;transition:all .15s;pointer-events:none}
+.img-block:hover::after{border-color:rgba(91,79,232,.45);box-shadow:0 0 0 3px rgba(91,79,232,.1)}
+.img-block.sel-img::after{border-color:var(--accent);box-shadow:0 0 0 3px rgba(91,79,232,.12)}
+.img-overlay{position:absolute;inset:0;opacity:0;transition:opacity .15s;border-radius:4px;display:flex;align-items:flex-end;padding:10px}
+.img-block:hover .img-overlay,.img-block.sel-img .img-overlay{opacity:1}
+.img-overlay-chip{background:rgba(10,10,20,.78);backdrop-filter:blur(6px);border-radius:6px;padding:4px 10px;font-size:10.5px;font-weight:600;color:#fff;letter-spacing:.1px;border:1px solid rgba(255,255,255,.1)}
+
+/* ── SECTION AI POPUP — fixed, contextually positioned by JS ── */
+.sec-popup{position:fixed;width:214px;background:#fff;border:1px solid rgba(14,21,35,.08);border-radius:14px;box-shadow:0 16px 48px rgba(14,21,35,.15),0 4px 12px rgba(14,21,35,.08);z-index:500;display:none;overflow:visible;transform-origin:top left}
+.sec-popup.show{display:block;animation:secPopIn .18s cubic-bezier(.34,1.45,.64,1)}
+.sec-popup.anchor-right{transform-origin:top right}
+@keyframes secPopIn{from{opacity:0;transform:scale(.9) translateY(-6px)}to{opacity:1;transform:scale(1) translateY(0)}}
+/* arrow pointer */
+.sec-popup::before{content:'';position:absolute;top:-6px;left:18px;width:12px;height:12px;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:1;transition:left .1s}
+.sec-popup.anchor-right::before{left:auto;right:18px}
+.sec-popup-inner{border-radius:14px;overflow:hidden;position:relative;z-index:2;background:#fff}
+.sp-head{padding:9px 12px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sp-name{font-size:9.5px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);display:flex;align-items:center;gap:5px}
+.sp-name-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.sp-close{width:18px;height:18px;border-radius:4px;border:none;background:transparent;cursor:pointer;color:var(--txt3);display:flex;align-items:center;justify-content:center;transition:all .1s;font-size:13px;line-height:1}
+.sp-close:hover{background:var(--bg);color:var(--txt)}
+/* AI quick actions — 3 icon+label pills */
+.sp-ai-row{display:flex;align-items:center;gap:3px;padding:6px 7px;border-bottom:1px solid var(--border)}
+.sp-ai-btn{flex:1;padding:6px 3px;border-radius:8px;border:none;background:var(--accent2);cursor:pointer;font-size:10px;font-weight:700;color:var(--accent);font-family:'Inter',-apple-system,sans-serif;transition:all .13s;display:flex;flex-direction:column;align-items:center;gap:3px;letter-spacing:.1px}
+.sp-ai-btn:hover{background:var(--accent);color:#fff;transform:translateY(-1px);box-shadow:0 3px 10px rgba(91,79,232,.3)}
+.sp-ai-btn svg{width:11px;height:11px;flex-shrink:0}
+/* utility actions list */
+.sp-actions{padding:3px}
+.spa{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:11.5px;color:var(--txt2);font-family:'Inter',-apple-system,sans-serif;font-weight:500;text-align:left;width:100%;transition:all .1s}
+.spa:hover{background:var(--bg);color:var(--txt)}
+.spa.red:hover{background:rgba(239,68,68,.06);color:var(--red)}
+.spa svg{width:12px;height:12px;color:var(--txt3);flex-shrink:0}
+.spa:hover svg{color:currentColor}
+.sp-div{height:1px;background:var(--border);margin:2px 4px}
+
+/* ── TEXT AI POPUP — rebuilt, rich, powerful ── */
+.txt-pop{position:fixed;z-index:9999;width:280px;display:none;filter:drop-shadow(0 20px 60px rgba(14,21,35,.18))}
+.txt-pop.show{display:block;animation:txPopIn .17s cubic-bezier(.34,1.45,.64,1)}
+@keyframes txPopIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+.txt-pop-inner{background:#fff;border:1px solid rgba(14,21,35,.08);border-radius:14px;overflow:hidden;box-shadow:none}
+/* arrow */
+.txt-pop-arrow{position:absolute;top:-5px;left:22px;width:10px;height:10px;background:#fff;border:1px solid rgba(91,79,232,.15);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:10;pointer-events:none}
+/* AI command bar — full width, prominent */
+.tp-cmd{display:flex;align-items:center;gap:8px;padding:10px 12px 9px;background:linear-gradient(135deg,#FAFBFF 0%,#F0EEFF 100%);border-bottom:1px solid rgba(91,79,232,.1)}
+.tp-cmd-icon{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,#5B4FE8,#8B7FFF);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;flex-shrink:0;font-weight:800;box-shadow:0 2px 8px rgba(91,79,232,.3)}
+.tp-cmd-wrap{flex:1;display:flex;align-items:center;gap:6px;background:#fff;border-radius:8px;border:1px solid rgba(91,79,232,.18);padding:5px 8px;box-shadow:0 1px 4px rgba(91,79,232,.08)}
+.tp-cmd-input{flex:1;border:none;background:transparent;font-size:12px;font-family:'Inter',-apple-system,sans-serif;outline:none;color:var(--txt);font-weight:400;min-width:0}
+.tp-cmd-input::placeholder{color:var(--txt3);font-size:11.5px}
+.tp-cmd-badge{font-size:8px;font-weight:700;letter-spacing:.6px;padding:2px 6px;border-radius:4px;background:var(--accent2);color:var(--accent);text-transform:uppercase;flex-shrink:0;white-space:nowrap}
+.tp-cmd-send{width:24px;height:24px;border-radius:6px;border:none;background:var(--accent);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.tp-cmd-send:hover{background:var(--accent3);transform:scale(1.1)}
+/* Quick AI chips row */
+.tp-chips{display:flex;gap:4px;padding:7px 10px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+.tp-chips::-webkit-scrollbar{display:none}
+.tp-chip{padding:4px 9px;border-radius:20px;border:1px solid var(--border2);background:#fff;font-size:10.5px;font-weight:600;color:var(--txt2);cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .12s;white-space:nowrap;flex-shrink:0}
+.tp-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent2)}
+.tp-chip.ai{background:var(--accent2);color:var(--accent);border-color:rgba(91,79,232,.2)}
+.tp-chip.ai:hover{background:var(--accent);color:#fff}
+/* Action groups */
+.tp-group{padding:4px 4px 0}
+.tp-group-label{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--txt3);padding:4px 8px 2px;display:block}
+/* Action rows */
+.tpa{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:12px;color:var(--txt2);font-family:'Inter',-apple-system,sans-serif;font-weight:500;text-align:left;width:100%;transition:all .1s;margin-bottom:1px}
+.tpa:hover{background:var(--bg);color:var(--txt)}
+.tpa.danger:hover{background:rgba(239,68,68,.05);color:var(--red)}
+.tpa.ai-a{color:var(--txt)}
+.tpa-ic{width:26px;height:26px;border-radius:7px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.tpa-ic svg{width:12px;height:12px;color:var(--txt3);transition:color .12s}
+.tpa:hover .tpa-ic{background:rgba(91,79,232,.08)}
+.tpa:hover .tpa-ic svg{color:var(--accent)}
+.tpa.ai-a:hover .tpa-ic{background:var(--accent);box-shadow:0 2px 8px rgba(91,79,232,.3)}
+.tpa.ai-a:hover .tpa-ic svg{color:#fff}
+.tpa-lbl{flex:1;line-height:1.3;font-size:12px;font-weight:500}
+.tpa-hint{font-size:10px;color:var(--txt3);font-weight:400;display:block;margin-top:1px}
+.tpa-arr{font-size:12px;color:var(--txt3);margin-left:auto;flex-shrink:0}
+.tp-sep{height:1px;background:var(--border);margin:4px 8px}
+.tp-footer{padding:6px 8px 8px;display:flex;gap:4px}
+.tp-foot-btn{flex:1;padding:6px 8px;border-radius:7px;border:1px solid var(--border);background:transparent;font-size:11px;font-weight:600;color:var(--txt2);cursor:pointer;font-family:'Inter',-apple-system,sans-serif;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:4px}
+.tp-foot-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent2)}
+
+
+/* Rewrite + tone submenus */
+.rw-sub{position:fixed;background:#fff;border:1px solid rgba(14,21,35,.09);border-radius:10px;padding:3px;box-shadow:0 10px 32px rgba(14,21,35,.14);z-index:10001;min-width:158px;display:none}
+.rw-sub.show{display:block;animation:txPopIn .13s cubic-bezier(.34,1.4,.64,1)}
+.rw-item{display:flex;align-items:center;gap:6px;padding:6px 9px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:11.5px;color:var(--txt2);font-family:'Inter',-apple-system,sans-serif;font-weight:500;width:100%;text-align:left;transition:all .1s}
+.rw-item:hover{background:var(--accent2);color:var(--accent)}
+
+/* Image toolbar — dark compact pill */
+.img-tb{position:fixed;background:#111827;border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:3px 4px;display:none;align-items:center;gap:0;box-shadow:0 8px 28px rgba(0,0,0,.26),0 2px 8px rgba(0,0,0,.12);z-index:9999;white-space:nowrap;animation:txPopIn .14s cubic-bezier(.34,1.4,.64,1)}
+.img-tb.show{display:flex}
+.itb{display:flex;align-items:center;gap:3px;padding:4px 8px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:11px;color:rgba(255,255,255,.72);font-family:'Inter',-apple-system,sans-serif;font-weight:500;transition:all .11s}
+.itb:hover{background:rgba(255,255,255,.1);color:#fff}
+.itb.ai{color:#a78bfa}
+.itb.ai:hover{background:rgba(167,139,250,.15);color:#c4b5fd}
+.itb.rd:hover{background:rgba(239,68,68,.18);color:#fca5a5}
+.itb svg{width:11px;height:11px}
+.itb-d{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 2px}
+
+/* ── MODALS ── */
+.modal-bg{position:fixed;inset:0;background:rgba(10,14,26,.5);backdrop-filter:blur(4px);z-index:9998;display:none;align-items:center;justify-content:center}
+.modal-bg.show{display:flex;animation:fadeIn .18s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:18px;padding:24px;max-width:480px;width:92%;box-shadow:var(--sh4);border:1px solid var(--border);animation:txPopIn .2s cubic-bezier(.34,1.4,.64,1)}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:6px}
+.modal p{font-size:12.5px;color:var(--txt2);margin-bottom:18px;line-height:1.65;font-family:'DM Sans',system-ui,sans-serif}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end}
+.img-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.img-pick-item{aspect-ratio:4/3;border-radius:9px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .14s}
+.img-pick-item:hover,.img-pick-item.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent2)}
+.gen-inp-row{display:flex;gap:6px;margin-bottom:16px}
+.gen-inp{flex:1;border:1px solid var(--border2);border-radius:var(--r);padding:8px 11px;font-size:12px;font-family:'Inter',-apple-system,sans-serif;outline:none;color:var(--txt)}
+.gen-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent2)}
+
+/* ── GENERATION OVERLAY ── */
+.gen-overlay{position:fixed;inset:0;background:rgba(10,14,26,.55);backdrop-filter:blur(6px);z-index:9997;display:none;align-items:center;justify-content:center}
+.gen-overlay.show{display:flex;animation:fadeIn .2s ease}
+.gen-card{background:#fff;border-radius:18px;padding:28px 32px;text-align:center;max-width:320px;width:90%;box-shadow:var(--sh4);border:1px solid var(--border);animation:txPopIn .2s cubic-bezier(.34,1.4,.64,1)}
+.gen-spinner{width:40px;height:40px;border-radius:50%;border:2.5px solid rgba(91,79,232,.15);border-top-color:var(--accent);animation:spin .65s linear infinite;margin:0 auto 14px}
+.gen-prog{height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin:12px 0 16px}
+.gen-bar{height:100%;background:linear-gradient(90deg,var(--accent),#a78bfa);border-radius:2px;animation:progress 2s ease forwards}
+@keyframes progress{from{width:0}to{width:100%}}
+.gen-stop{padding:7px 16px;border-radius:var(--r);border:1px solid var(--border);background:transparent;cursor:pointer;font-family:'Inter',-apple-system,sans-serif;font-size:12px;color:var(--txt2);transition:all .12s}
+.gen-stop:hover{background:var(--red2);color:var(--red);border-color:var(--red)}
+
+/* ── TOASTS ── */
+.toast-wrap{position:fixed;bottom:20px;right:18px;display:flex;flex-direction:column;gap:6px;z-index:99999;pointer-events:none}
+.toast{background:#111827;color:#fff;padding:8px 14px;border-radius:10px;font-size:11.5px;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.2);display:flex;align-items:center;gap:7px;animation:tIn .2s cubic-bezier(.34,1.4,.64,1),tOut .2s ease 2.6s forwards;max-width:260px;pointer-events:all;border:1px solid rgba(255,255,255,.06)}
+.toast.ok{border-left:2px solid var(--green)}
+.toast.inf{border-left:2px solid #a78bfa}
+.toast.warn{border-left:2px solid var(--orange)}
+.t-ico{font-size:12px;flex-shrink:0}
+@keyframes tIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes tOut{from{opacity:1;transform:none}to{opacity:0;transform:translateY(4px)}}
+
+/* ── CANVAS HINT ── */
+.canvas-hint{
+  position:fixed;bottom:12px;left:50%;transform:translateX(-50%);
+  height:auto;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:5px 14px;pointer-events:none;z-index:40;
+  border-radius:20px;border:1px solid #E4E7EC;
+  box-shadow:0 2px 8px rgba(0,0,0,.08)
+}
+.canvas-hint-txt{font-size:10px;color:var(--txt3);font-weight:500;letter-spacing:.1px;white-space:nowrap}
+.canvas-hint-txt span{color:var(--accent);font-weight:600}
+
+/* ════════════════════════════════════════════════════════
+   D'Palace — FINAL LAYOUT SYSTEM
+   Rule: section backgrounds = 100vw full bleed
+         content wrapper (.lpc) = max-width 1000px, centered
+   ════════════════════════════════════════════════════════ */
+:root{
+  --gold:#B8965A;--gold2:#F5EDD8;--gold3:#8B6F3A;
+  --cream:#FDFAF5;--dark:#1A120B;
+}
+
+/* Canvas fills space left of fixed 360px sidebar */
+.canvas-area{flex:1;overflow-y:auto;background:#fff;display:flex;flex-direction:column;position:relative;overflow-x:hidden}
+.canvas-frame{width:100%;background:#fff;min-height:100%;position:relative}
+
+/* EVERY section = full width background */
+.lp-hero,.lp-feat,.lp-about,.lp-test,.lp-faq,.lp-cta{
+  width:100%;box-sizing:border-box
+}
+
+/* Content wrapper = 1000px centered, consistent 40px side padding */
+.lpc{
+  max-width:1000px;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:40px;
+  padding-right:40px;
+  box-sizing:border-box;
+  width:100%
+}
+
+/* About inner uses same centering */
+.lp-about-inner{
+  max-width:1000px;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:40px;
+  padding-right:40px;
+  box-sizing:border-box;
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:60px;
+  align-items:center
+}
+
+/* ── HERO — full bleed dark bg, two-column inside 1000px container ── */
+.lp-hero{
+  background:linear-gradient(155deg,#0E0906 0%,#1A0F07 60%,#241309 100%);
+  position:relative;overflow:hidden;min-height:480px
+}
+/* Hero uses same 1000px centered container as all sections */
+.lp-hero .lpc{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:40px;
+  align-items:center;
+  padding-top:72px;
+  padding-bottom:72px
+}
+.lp-hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2
+}
+.lp-hero-right{
+  height:380px;border-radius:16px;overflow:hidden;
+  position:relative;z-index:2
+}
+.lp-hero-overlay{display:none}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(184,150,90,.12);border:1px solid rgba(184,150,90,.3);
+  border-radius:20px;padding:5px 14px;margin-bottom:24px;width:fit-content
+}
+.hero-eyebrow-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);animation:blink 2s ease infinite}
+.hero-eyebrow-txt{font-size:10.5px;font-weight:700;color:var(--gold);letter-spacing:.8px;text-transform:uppercase}
+.lp-hero h1{
+  font-size:46px;font-weight:800;color:#fff;line-height:1.1;
+  letter-spacing:-1.8px;margin-bottom:18px;font-family:'Inter',-apple-system,sans-serif
+}
+.lp-hero h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,#D4AF72,#B8965A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.lp-hero p{
+  font-size:15px;color:rgba(255,255,255,.55);line-height:1.8;
+  margin-bottom:32px;font-family:'DM Sans',system-ui,sans-serif;max-width:420px
+}
+.lp-hero-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.lp-btn-p{
+  padding:13px 28px;border-radius:8px;border:none;
+  background:linear-gradient(135deg,#B8965A,#D4AF72);
+  color:#1A120B;font-family:'Inter',-apple-system,sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 18px rgba(184,150,90,.35);transition:all .2s ease
+}
+.lp-btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(184,150,90,.5)}
+.lp-btn-s{
+  padding:13px 28px;border-radius:8px;
+  border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);
+  font-family:'Inter',-apple-system,sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;background:transparent;transition:all .2s ease
+}
+.lp-btn-s:hover{border-color:rgba(184,150,90,.5);color:var(--gold);transform:translateY(-1px)}
+.hero-trust{
+  display:flex;align-items:center;gap:12px;
+  margin-top:32px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08)
+}
+.hero-trust-txt{font-size:11.5px;color:rgba(255,255,255,.35);font-family:'DM Sans',system-ui,sans-serif;font-weight:500;line-height:1.5}
+.hero-trust-badges{display:flex;flex-shrink:0}
+.hero-trust-dot{width:20px;height:20px;border-radius:50%;background:rgba(184,150,90,.2);border:2px solid rgba(184,150,90,.25);margin-left:-5px}
+.hero-trust-dot:first-child{margin-left:0}
+
+/* ── SECTION SHARED ── */
+.sec-tag{
+  display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;color:var(--gold3);
+  padding:4px 12px;border-radius:20px;background:var(--gold2);margin-bottom:14px
+}
+.sec-ttl{
+  display:block;font-size:30px;font-weight:800;color:var(--dark);
+  letter-spacing:-1px;line-height:1.2;margin-bottom:10px;
+  font-family:'Inter',-apple-system,sans-serif
+}
+.sec-sub{
+  display:block;font-size:15px;color:#6B5040;line-height:1.7;
+  font-family:'DM Sans',system-ui,sans-serif;margin-top:6px;max-width:560px
+}
+
+/* ── FEATURES — cream bg full width ── */
+.lp-feat{padding:80px 0;background:var(--cream)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+.feat-card{
+  padding:28px 22px;border:1px solid #EDE4D3;border-radius:16px;background:#fff;
+  transition:all .22s ease;position:relative;overflow:hidden;
+  box-shadow:0 2px 8px rgba(107,76,42,.04)
+}
+.feat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),#D4AF72);
+  transform:scaleX(0);transition:transform .25s ease;transform-origin:left
+}
+.feat-card:hover{box-shadow:0 12px 36px rgba(107,76,42,.1);transform:translateY(-3px);border-color:#D4B896}
+.feat-card:hover::after{transform:scaleX(1)}
+.feat-ico{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold2),#EDE4D3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:16px
+}
+.feat-ttl{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--dark);letter-spacing:-.3px}
+.feat-dsc{font-size:13.5px;color:#7A6050;line-height:1.65;font-family:'DM Sans',system-ui,sans-serif}
+
+/* ── ABOUT — white bg full width ── */
+.lp-about{padding:80px 0;background:#fff;position:relative}
+.lp-about::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#EDE4D3,transparent)
+}
+.lp-about-txt{padding:0}
+.lp-about p{
+  display:block;font-size:15px;color:#5C4B3A;line-height:1.82;
+  margin-top:18px;font-family:'DM Sans',system-ui,sans-serif
+}
+.lp-about-img{
+  height:400px;border-radius:20px;overflow:hidden;
+  box-shadow:0 20px 56px rgba(26,18,11,.16);position:relative
+}
+.lp-about-img::after{
+  content:'';position:absolute;inset:0;
+  border:1px solid rgba(255,255,255,.15);border-radius:20px;pointer-events:none;z-index:2
+}
+.about-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  margin-top:36px;padding-top:32px;border-top:1px solid #EDE4D3
+}
+.astat{padding-right:16px;border-right:1px solid #EDE4D3;cursor:pointer}
+.astat:last-child{border-right:none;padding-right:0}
+.astat strong{
+  display:block;font-size:32px;font-weight:800;color:var(--gold);
+  letter-spacing:-1.5px;line-height:1.05;font-family:'Inter',-apple-system,sans-serif;
+  transition:color .18s
+}
+.astat:hover strong{color:var(--gold3)}
+.astat span{
+  display:block;font-size:11px;color:#9A8070;font-weight:600;
+  margin-top:6px;letter-spacing:.5px;text-transform:uppercase
+}
+
+/* ── TESTIMONIALS — cream bg full width ── */
+.lp-test{padding:80px 0;background:var(--cream)}
+.test-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:44px}
+.test-card{
+  padding:28px;border:1px solid #EDE4D3;border-radius:18px;background:#fff;
+  transition:all .2s ease;box-shadow:0 2px 8px rgba(107,76,42,.04)
+}
+.test-card:hover{box-shadow:0 12px 32px rgba(107,76,42,.1);transform:translateY(-2px);border-color:#D4B896}
+.t-stars{display:block;color:var(--gold);font-size:12px;margin-bottom:14px;letter-spacing:3px}
+.t-q{
+  display:block;font-size:14px;color:#4A3828;line-height:1.75;margin-bottom:20px;
+  font-family:'DM Sans',system-ui,sans-serif;font-style:italic
+}
+.t-auth{display:flex;align-items:center;gap:12px}
+.t-av{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:#fff
+}
+.t-nm{display:block;font-size:13px;font-weight:700;color:var(--dark);letter-spacing:-.2px}
+.t-rl{display:block;font-size:11.5px;color:#9A8070;margin-top:2px}
+
+/* ── FAQ — white bg full width ── */
+.lp-faq{padding:80px 0;background:#fff}
+.faq-list{margin-top:36px;display:flex;flex-direction:column;gap:10px}
+.faq-it{border:1px solid #EDE4D3;border-radius:14px;background:#FDFAF5;overflow:hidden;transition:all .18s}
+.faq-it.open{border-color:var(--gold);background:#fff;box-shadow:0 4px 20px rgba(184,150,90,.1)}
+.faq-q{
+  padding:18px 22px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;font-size:14px;font-weight:600;color:var(--dark);gap:12px;line-height:1.4;
+  transition:background .12s
+}
+.faq-q:hover{background:rgba(184,150,90,.04)}
+.faq-q svg{flex-shrink:0;transition:transform .22s;color:#B0906A;width:14px;height:14px}
+.faq-it.open .faq-q svg{transform:rotate(180deg);color:var(--gold3)}
+.faq-a{
+  padding:0 22px;max-height:0;overflow:hidden;transition:all .26s ease;
+  font-size:14px;color:#6B5040;line-height:1.75;font-family:'DM Sans',system-ui,sans-serif
+}
+.faq-it.open .faq-a{max-height:180px;padding:0 22px 20px}
+
+/* ── CTA — dark bg full width, content 1000px centered ── */
+.lp-cta{
+  padding:88px 0;
+  background:linear-gradient(155deg,#1A120B 0%,#231608 55%,#1E1208 100%);
+  position:relative;overflow:hidden;text-align:center
+}
+.lp-cta::before{
+  content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);
+  width:560px;height:560px;border-radius:50%;
+  background:radial-gradient(circle,rgba(184,150,90,.1) 0%,transparent 70%);pointer-events:none
+}
+/* Same container as .lpc: 1000px centered, 40px padding */
+.cta-inner{
+  position:relative;z-index:1;
+  max-width:1000px;
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:40px;
+  padding-right:40px;
+  box-sizing:border-box
+}
+.lp-cta h2{
+  font-size:36px;font-weight:800;color:#fff;letter-spacing:-1.3px;
+  line-height:1.18;margin-bottom:14px;font-family:'Inter',-apple-system,sans-serif
+}
+.lp-cta p{
+  font-size:15px;color:rgba(255,255,255,.45);line-height:1.72;
+  margin-bottom:28px;font-family:'DM Sans',system-ui,sans-serif
+}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.cta-p{
+  padding:13px 30px;border-radius:9px;border:none;
+  background:linear-gradient(135deg,#B8965A,#D4AF72);color:#1A120B;
+  font-family:'Inter',-apple-system,sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 20px rgba(184,150,90,.4);transition:all .18s ease
+}
+.cta-p:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(184,150,90,.55)}
+.cta-s{
+  padding:13px 30px;border-radius:9px;border:1.5px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.75);font-family:'Inter',-apple-system,sans-serif;
+  font-size:14px;font-weight:500;cursor:pointer;background:transparent;transition:all .18s ease
+}
+.cta-s:hover{border-color:rgba(184,150,90,.5);color:var(--gold)}
+.cta-note{font-size:11px;color:rgba(255,255,255,.2);margin-top:18px;font-family:'DM Sans',system-ui,sans-serif;display:block}
+
+/* Before/after */
+.ba-before{display:none}
+.ba-mode .ba-after{display:none}
+.ba-mode .ba-before{display:block}
+
+/* Image gradients — warm restaurant tones */
+.ph-img-1{background:linear-gradient(135deg,#2C1F0F 0%,#4A2E14 50%,#6B4C2A 100%)}
+.ph-img-2{background:linear-gradient(135deg,#1A120B,#2C1F0F,#3D2B14)}
+.ph-img-3{background:linear-gradient(135deg,#B8965A,#8B6F3A,#6B4C2A)}
+.ph-img-4{background:linear-gradient(135deg,#D4AF72,#B8965A,#8B6F3A)}
+.ph-img-5{background:linear-gradient(135deg,#4A2E14,#2C1F0F,#1A120B)}
+.ph-img-6{background:linear-gradient(135deg,#6B4C2A,#8B6F3A,#B8965A)}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+
+/* ── RIGHT AI SIDEBAR ── */
+.rsb{position:fixed;top:60px;right:0;bottom:0;width:360px;background:#fff;border-left:1px solid #E8ECF0;display:flex;flex-direction:column;z-index:500;transform:translateX(0);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:-12px 0 48px rgba(0,0,0,.12);animation:slideInRight .35s ease}
+@keyframes slideInRight{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+.rsb.hidden{transform:translateX(110%);animation:none}
+.rsb.floating{top:80px;bottom:80px;right:16px;border-radius:18px;border:1px solid #D0D7E0;box-shadow:0 20px 60px rgba(0,0,0,.16);overflow:hidden}
+.rsb-hdr{height:60px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #E8ECF0;flex-shrink:0;background:linear-gradient(180deg,#FAFBFC 0%,#fff 100%)}
+.rsb-hdr-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#5B4FE8,#8B7FFF);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(91,79,232,.25)}
+.rsb-title{font-size:11px;font-weight:800;color:#0D1117;flex:1;letter-spacing:.4px;text-transform:uppercase;opacity:.85}
+.rsb-hdr-btn{width:36px;height:36px;border-radius:8px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9AA5B4;transition:all .18s ease;flex-shrink:0}
+.rsb-hdr-btn:hover{background:rgba(91,79,232,.09);color:#5B4FE8;transform:scale(1.08)}
+.rsb-menu-wrap{position:relative;flex-shrink:0}
+.rsb-menu{position:absolute;top:36px;right:0;background:#fff;border:1px solid #EEEEEE;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.1);padding:4px;min-width:168px;z-index:600;display:none}
+.rsb-menu.open{display:block}
+.rsb-menu-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:12px;font-weight:500;color:#0D1117;cursor:pointer;white-space:nowrap;transition:background .1s;border:none;background:transparent;width:100%;text-align:left;font-family:'Inter',-apple-system,sans-serif}
+.rsb-menu-item:hover{background:#F4F5F7}
+.rsb-menu-item svg{flex-shrink:0;color:#9AA5B4}
+.rsb-actions{padding:16px 14px;display:flex;flex-direction:column;gap:8px;flex-shrink:0;border-bottom:1px solid #E8ECF0}
+.rsb-qa{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:11px;border:1px solid transparent;background:#F3F4F9;cursor:pointer;font-size:12px;font-weight:500;color:#0D1117;transition:all .2s cubic-bezier(.34,1.4,.64,1);font-family:'Inter',-apple-system,sans-serif;text-align:left;width:100%;position:relative;overflow:hidden}
+.rsb-qa::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(91,79,232,.12) 0%,transparent 75%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.rsb-qa::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(180deg,#5B4FE8,#8B7FFF);opacity:0;transition:opacity .2s ease}
+.rsb-qa:hover{background:#EEEAFD;color:#5B4FE8;transform:translateX(3px);box-shadow:0 4px 12px rgba(91,79,232,.14);border-color:rgba(91,79,232,.1)}
+.rsb-qa:hover::before{opacity:1}
+.rsb-qa:hover::after{opacity:1}
+.rsb-qa:active{transform:translateX(2px)}
+.rsb-qa:disabled{opacity:0.5;cursor:not-allowed;pointer-events:none}
+.rsb-qa svg{flex-shrink:0;width:14px;height:14px;opacity:.65;transition:all .2s ease}
+.rsb-qa:hover svg{opacity:1;color:#5B4FE8}
+.rsb-qa:disabled svg{opacity:.3}
+.rsb-qa-spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(91,79,232,0.2);border-top-color:#5B4FE8;border-radius:50%;animation:rsbSpin 0.8s linear infinite}
+@keyframes rsbSpin{to{transform:rotate(360deg)}}
+.rsb-chat{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:10px;background:linear-gradient(180deg,#fff 0%,#FAFBFC 100%);scroll-behavior:smooth}
+.rsb-bubble-row{display:flex;align-items:flex-start;gap:8px;animation:slideIn .25s ease}
+.rsb-avatar{width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#5B4FE8,#8B7FFF);flex-shrink:0;margin-top:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(91,79,232,.25)}
+.rsb-bubble{max-width:86%;font-size:13px;line-height:1.55;padding:11px 14px;border-radius:13px;word-wrap:break-word;animation:slideIn .3s cubic-bezier(.34,1.4,.64,1)}
+.rsb-bubble.ai{background:linear-gradient(135deg,#F0EBFF 0%,#F7F5FF 100%);color:#1a1a2e;border-bottom-left-radius:4px;box-shadow:0 2px 6px rgba(91,79,232,.1);border:1px solid rgba(91,79,232,.08)}
+.rsb-bubble.user{background:linear-gradient(135deg,#5B4FE8,#7B6FF5);color:#fff;border-bottom-right-radius:4px;box-shadow:0 4px 12px rgba(91,79,232,.25);border:1px solid rgba(91,79,232,.3)}
+@keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.rsb-footer{padding:16px;border-top:1px solid #E8ECF0;flex-shrink:0;background:linear-gradient(180deg,#fff 0%,#FAFBFC 100%)}
+.rsb-input-wrap{display:flex;align-items:flex-end;gap:10px;background:#fff;border-radius:13px;border:1.5px solid #D0D7E0;padding:10px 12px;transition:all .2s cubic-bezier(.34,1.4,.64,1);box-shadow:0 2px 4px rgba(0,0,0,.02)}
+.rsb-input-wrap:focus-within{border-color:#5B4FE8;box-shadow:0 0 0 4px rgba(91,79,232,.1);transform:translateY(-1px)}
+.rsb-textarea{flex:1;border:none;background:transparent;font-size:12.5px;font-family:'Inter',-apple-system,sans-serif;color:#0D1117;resize:none;outline:none;max-height:80px;line-height:1.5;min-height:20px;font-weight:400}
+.rsb-textarea::placeholder{color:#9AA5B4;font-weight:400}
+.rsb-send-btn{width:34px;height:34px;border-radius:9px;border:none;background:linear-gradient(135deg,#5B4FE8,#7D60FF);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s cubic-bezier(.34,1.4,.64,1);box-shadow:0 4px 12px rgba(91,79,232,.3);position:relative;overflow:hidden}
+.rsb-send-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.2) 0%,transparent 80%);opacity:0;transition:opacity .3s ease}
+.rsb-send-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(91,79,232,.4)}
+.rsb-send-btn:hover::before{opacity:1}
+.rsb-send-btn:active{transform:translateY(-1px);box-shadow:0 2px 8px rgba(91,79,232,.3)}
+.rsb-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#5B4FE8,#7D60FF);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(91,79,232,.35);z-index:600;transition:all .3s cubic-bezier(.34,1.56,.64,1);animation:fab-bounce .5s ease infinite;border:1.5px solid rgba(255,255,255,.15)}
+@keyframes fab-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.rsb-fab:hover{transform:scale(1.12);box-shadow:0 16px 40px rgba(91,79,232,.45)}
+.rsb-fab:active{transform:scale(1.08)}
+.rsb-fab.visible{display:flex}
+
+/* ── SECTION PICKER ── */
+.rsb-picker{padding:0;display:flex;flex-direction:column;height:100%;animation:fadeIn .2s ease}
+.rsb-picker-hdr{height:52px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #E8ECF0;flex-shrink:0;background:#fff}
+.rsb-picker-back{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9AA5B4;transition:all .18s ease;border-radius:8px}
+.rsb-picker-back:hover{background:#F0EFFE;color:#5B4FE8;transform:translateX(-2px)}
+.rsb-picker-title{font-size:13px;font-weight:700;color:#0D1117;flex:1}
+
+/* Search */
+.rsb-search-wrap{padding:12px 14px;border-bottom:1px solid #E8ECF0;flex-shrink:0;background:#fff}
+.rsb-search{display:flex;align-items:center;gap:8px;background:#F4F5F7;border:1.5px solid transparent;border-radius:10px;padding:8px 12px;transition:all .15s ease}
+.rsb-search:focus-within{background:#fff;border-color:#5B4FE8;box-shadow:0 0 0 3px rgba(91,79,232,.1)}
+.rsb-search svg{flex-shrink:0;color:#9AA5B4}
+.rsb-search input{border:none;background:transparent;font-size:12px;color:#0D1117;font-family:'Inter',-apple-system,sans-serif;width:100%;outline:none}
+.rsb-search input::placeholder{color:#B0B7C3}
+
+/* Recommended */
+.rsb-rec{padding:12px 14px;border-bottom:1px solid #E8ECF0;flex-shrink:0;background:#fff}
+.rsb-rec-lbl{font-size:9.5px;font-weight:800;color:#5B4FE8;text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px;opacity:.85}
+.rsb-rec-items{display:flex;flex-direction:column;gap:6px}
+.rsb-rec-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;border:1px solid #EEEAFD;background:linear-gradient(90deg,#F5F3FF,#FAF9FF);cursor:pointer;font-size:12px;font-weight:600;color:#5B4FE8;transition:all .15s ease}
+.rsb-rec-item:hover{background:linear-gradient(90deg,#EEEAFD,#F0EFFE);border-color:#c4b8fa;transform:translateX(2px)}
+.rsb-rec-item-ico{font-size:14px;line-height:1}
+.rsb-rec-item-arrow{margin-left:auto;color:#9AA5B4;font-size:14px;transition:transform .15s}
+.rsb-rec-item:hover .rsb-rec-item-arrow{transform:translateX(2px);color:#5B4FE8}
+
+/* Category tabs */
+.rsb-cats{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid #E8ECF0;overflow-x:auto;flex-shrink:0;background:#fff}
+.rsb-cats::-webkit-scrollbar{display:none}
+.rsb-cat-btn{padding:5px 13px;border-radius:20px;border:1.5px solid #E4E7EC;background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:#6B7280;transition:all .15s ease;white-space:nowrap;flex-shrink:0}
+.rsb-cat-btn:hover{background:#F5F3FF;color:#5B4FE8;border-color:#c4b8fa}
+.rsb-cat-btn.active{background:#5B4FE8;color:#fff;border-color:#5B4FE8;font-weight:700}
+
+/* Section list rows */
+.rsb-grid{display:flex;flex-direction:column;gap:0;padding:8px;overflow-y:auto;flex:1;background:#fff}
+.rsb-sec-card{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:1px solid transparent;background:transparent;cursor:pointer;transition:all .15s ease;font-size:12.5px;font-weight:600;color:#0D1117;text-align:left;width:100%}
+.rsb-sec-card:hover{background:#F5F3FF;border-color:#EEEAFD;color:#5B4FE8}
+.rsb-card-ico{font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;background:#F4F5F7;flex-shrink:0;transition:all .15s ease}
+.rsb-sec-card:hover .rsb-card-ico{background:#EEEAFD}
+.rsb-card-info{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.rsb-card-name{font-size:12.5px;font-weight:600;color:inherit}
+.rsb-card-desc{font-size:11px;color:#9AA5B4;font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rsb-sec-card:hover .rsb-card-desc{color:#8B7FFF}
+.rsb-card-add{width:22px;height:22px;border-radius:6px;background:#E8ECF0;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s ease;color:#6B7280;font-size:14px;font-weight:400;line-height:1}
+.rsb-sec-card:hover .rsb-card-add{background:#5B4FE8;color:#fff}
+.rsb-section-group-lbl{font-size:9.5px;font-weight:800;color:#B0B7C3;text-transform:uppercase;letter-spacing:.6px;padding:12px 12px 4px;}
+
+/* ── WORKFLOW PANELS ── */
+.rsb-panel{padding:0;display:flex;flex-direction:column;height:100%;animation:fadeIn .2s ease;display:none}
+.rsb-panel.active{display:flex;animation:slideInPanel .28s cubic-bezier(.34,1.45,.64,1)}
+@keyframes slideInPanel{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.rsb-panel-hdr{height:52px;padding:0 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #E8ECF0;flex-shrink:0;background:linear-gradient(180deg,#fff 0%,#FAFBFC 100%)}
+.rsb-panel-back{width:36px;height:36px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#9AA5B4;transition:all .18s cubic-bezier(.34,1.4,.64,1);border-radius:8px}
+.rsb-panel-back:hover{background:rgba(91,79,232,.09);color:#5B4FE8;transform:translateX(-2px)}
+.rsb-panel-title{font-size:12px;font-weight:700;color:#0D1117;letter-spacing:.3px}
+.rsb-panel-content{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:16px;background:linear-gradient(180deg,#fff 0%,#FAFBFC 100%)}
+.rsb-sugg-lbl{font-size:10px;font-weight:800;color:#9AA5B4;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;opacity:.75}
+.rsb-sugg-items{display:flex;flex-direction:column;gap:8px;margin-bottom:0}
+.rsb-sugg-btn{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid transparent;background:#F3F4F9;cursor:pointer;font-size:12px;font-weight:500;color:#0D1117;transition:all .18s cubic-bezier(.34,1.4,.64,1);position:relative;overflow:hidden}
+.rsb-sugg-btn::before{content:'';position:absolute;left:0;top:50%;width:3px;height:0;background:linear-gradient(180deg,#5B4FE8,#8B7FFF);transform:translateY(-50%);transition:height .2s ease;border-radius:2px}
+.rsb-sugg-btn:hover{background:#EEEAFD;color:#5B4FE8;transform:translateX(2px);border-color:rgba(91,79,232,.1);box-shadow:0 2px 6px rgba(91,79,232,.09)}
+.rsb-sugg-btn:hover::before{height:24px}
+.rsb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.rsb-chip{padding:8px 14px;border-radius:20px;border:1px solid #D0D7E0;background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:#4A5568;transition:all .18s cubic-bezier(.34,1.4,.64,1);box-shadow:0 1px 2px rgba(0,0,0,.02)}
+.rsb-chip:hover{background:#F3F4F9;color:#5B4FE8;border-color:rgba(91,79,232,.2)}
+.rsb-chip.selected{background:linear-gradient(135deg,#5B4FE8,#7D60FF);color:#fff;border-color:rgba(91,79,232,.2);transform:scale(1.05);font-weight:700;box-shadow:0 3px 8px rgba(91,79,232,.2)}
+.rsb-scope{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-bottom:8px;background:#F3F4F9;border-radius:10px;padding:4px;overflow:hidden;border:1px solid rgba(91,79,232,.05)}
+.rsb-scope-btn{padding:10px 12px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:11px;font-weight:600;color:#4A5568;transition:all .18s cubic-bezier(.34,1.4,.64,1);position:relative}
+.rsb-scope-btn:hover{color:#5B4FE8}
+.rsb-scope-btn.selected{background:linear-gradient(135deg,#5B4FE8,#7D60FF);color:#fff;font-weight:700;box-shadow:0 2px 6px rgba(91,79,232,.2)}
+.rsb-panel-action{margin-top:auto;padding:16px;border-top:1px solid #E8ECF0;background:linear-gradient(180deg,#fff 0%,#FAFBFC 100%)}
+.rsb-action-btn{width:100%;padding:13px 16px;border-radius:10px;border:none;background:linear-gradient(135deg,#5B4FE8,#7D60FF);color:#fff;cursor:pointer;font-size:12px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;transition:all .2s cubic-bezier(.34,1.4,.64,1);box-shadow:0 4px 14px rgba(91,79,232,.3);position:relative;overflow:hidden}
+.rsb-action-btn::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,255,255,.2) 0%,transparent 75%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.rsb-action-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(91,79,232,.4)}
+.rsb-action-btn:hover::before{opacity:1}
+.rsb-action-btn:active{transform:translateY(0);box-shadow:0 2px 8px rgba(91,79,232,.25)}
+.rsb-action-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+.rsb-action-btn.loading{opacity:.8;pointer-events:none}
+
+</style>
+</head>
+<body style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+
+<!-- MINIMAL HEADER -->
+<header class="hdr">
+  <div class="hdr-left">
+    <button class="btn-chat-back" onclick="act('back')" title="Back to Chat">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Chat
+    </button>
+    <div class="hdr-divider"></div>
+    <div class="hdr-logo">
+      <div class="lmark">E</div>
+      <span class="hdr-logo-txt">ERA</span>
+    </div>
+    <div class="page-info">
+      <span class="page-nm" id="pageNm" contenteditable="false" onclick="this.contentEditable='true';this.focus()" onblur="this.contentEditable='false';setStatus('saved')" oninput="setStatus('unsaved')" title="Click to rename">D'Palace — About Page</span>
+      <div class="status-dot" id="statusDot">
+        <div class="status-dot-circle ai" id="statusCircle"></div>
+        <span class="status-dot-txt" id="statusTxt">Generated</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Edit/Preview segmented + device icons -->
+  <div class="hdr-center">
+    <div class="seg">
+      <button class="seg-btn active" id="segEdit" onclick="setMode('edit')">Edit</button>
+      <button class="seg-btn" id="segPreview" onclick="setMode('preview')">Preview</button>
+    </div>
+    <div class="dev-grp" id="devGrp">
+      <button class="dev-btn active" onclick="setDev('desktop',this)" title="Desktop">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </button>
+      <button class="dev-btn" onclick="setDev('tablet',this)" title="Tablet">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+      </button>
+      <button class="dev-btn" onclick="setDev('mobile',this)" title="Mobile">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT: undo/redo + autosave + publish -->
+  <div class="hdr-right">
+    <button class="btn btn-ghost btn-ico" onclick="act('undo')" title="Undo ⌘Z">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+    </button>
+    <button class="btn btn-ghost btn-ico" onclick="act('redo')" title="Redo">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 14l4-4-4-4"/><path d="M19 10H8a4 4 0 0 0 0 8h1"/></svg>
+    </button>
+    <span class="autosave-txt" id="autosaveTxt">Saved 3s ago</span>
+    <button class="btn btn-grn" id="publishBtn" onclick="act('publish')">Publish</button>
+  </div>
+</header>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+<!-- CANVAS AREA -->
+<div class="canvas-area" id="canvasArea" style="flex:1">
+  <div class="canvas-frame" id="canvasFrame">
+
+    <!-- HERO -->
+    <div class="psec" id="sec-hero" onclick="selSec(this,'Hero',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">Hero</div>
+      <div class="skel-overlay" id="sk-hero"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-hero"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">Hero Section</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Improve','hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Improve</button>
+          <button class="sp-ai-btn" onclick="spAI('SEO','hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('hero','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="moveSec('hero','down',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Move Down</button>
+          <button class="spa" onclick="dupSec('Hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <button class="spa" onclick="addBelow('hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Below</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('hero',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="ba-after lp-hero">
+        <div class="lpc">
+        <div class="lp-hero-left">
+          <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span><span class="hero-eyebrow-txt eb" onclick="showTxtPop(event,'Label')">Est. 2012 · Fine Dining</span></div>
+          <h1 class="eb" onclick="showTxtPop(event,'Heading')">Where Every Meal<br>Becomes a <em>Memory</em></h1>
+          <p class="eb" onclick="showTxtPop(event,'Paragraph')">For over a decade, D'Palace has set the standard for extraordinary dining. From our handcrafted menus to our impeccable service, every detail is designed to make your experience unforgettable.</p>
+          <div class="lp-hero-btns">
+            <button class="lp-btn-p eb" onclick="showTxtPop(event,'Button')">Reserve a Table</button>
+            <button class="lp-btn-s eb" onclick="showTxtPop(event,'Button')">View Our Menu →</button>
+          </div>
+          <div class="hero-trust">
+            <div class="hero-trust-badges"><div class="hero-trust-dot"></div><div class="hero-trust-dot"></div><div class="hero-trust-dot"></div></div>
+            <span class="hero-trust-txt eb" onclick="showTxtPop(event,'Label')">2,400+ guests monthly · Michelin recommended · 12 years of excellence</span>
+          </div>
+        </div>
+        <div class="lp-hero-right">
+          <div class="ph-img-2 img-block" id="img-hero" onclick="selImg(this,'hero',event)" style="width:100%;height:100%;min-height:380px">
+            <div class="img-overlay"><div class="img-overlay-chip">Replace Image</div></div>
+          </div>
+        </div>
+        </div><!-- /lpc -->
+      </div>
+      <div class="add-strip" id="ab-hero"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="psec" id="sec-features" onclick="selSec(this,'Features',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">Features</div>
+      <div class="skel-overlay" id="sk-features"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-features"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">Features Section</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Improve','features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Improve</button>
+          <button class="sp-ai-btn" onclick="spAI('SEO','features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('features','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="moveSec('features','down',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Move Down</button>
+          <button class="spa" onclick="dupSec('Features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <button class="spa" onclick="addBelow('features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Below</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('features',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="lp-feat">
+        <div class="lpc">
+          <span class="sec-tag">The D'Palace Experience</span>
+          <h2 class="sec-ttl eb" onclick="showTxtPop(event,'Heading')">Crafted With Passion,<br>Served With Pride</h2>
+          <p class="sec-sub eb" onclick="showTxtPop(event,'Paragraph')">From farm-fresh ingredients to decades of culinary expertise — every element of your visit is thoughtfully designed.</p>
+          <div class="feat-grid">
+            <div class="feat-card">
+              <div class="feat-ico">🍽️</div>
+              <div class="feat-ttl eb" onclick="showTxtPop(event,'Heading')">Seasonal Menu</div>
+              <div class="feat-dsc eb" onclick="showTxtPop(event,'Paragraph')">Our chefs craft new dishes every season using locally sourced, fresh ingredients at their peak.</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-ico">🍷</div>
+              <div class="feat-ttl eb" onclick="showTxtPop(event,'Heading')">Curated Wine List</div>
+              <div class="feat-dsc eb" onclick="showTxtPop(event,'Paragraph')">Over 200 labels selected by our sommelier to perfectly complement every dish on the menu.</div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-ico">✨</div>
+              <div class="feat-ttl eb" onclick="showTxtPop(event,'Heading')">Private Dining</div>
+              <div class="feat-dsc eb" onclick="showTxtPop(event,'Paragraph')">Exclusive spaces for celebrations, corporate events, and intimate gatherings tailored to you.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="add-strip" id="ab-features"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="psec" id="sec-about" onclick="selSec(this,'About',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">About</div>
+      <div class="skel-overlay" id="sk-about"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-about"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">About Section</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','about',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Improve','about',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Improve</button>
+          <button class="sp-ai-btn" onclick="spAI('SEO','about',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('about','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="moveSec('about','down',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Move Down</button>
+          <button class="spa" onclick="dupSec('About',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <button class="spa" onclick="addBelow('about',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Below</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('about',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="lp-about">
+        <div class="lp-about-inner">
+            <div class="lp-about-txt">
+              <span class="sec-tag">Our Story</span>
+              <h2 class="sec-ttl eb" onclick="showTxtPop(event,'Heading')">A Legacy of Flavour & Hospitality</h2>
+              <p class="eb" onclick="showTxtPop(event,'Paragraph')">Founded in 2012, D'Palace was born from a simple belief: that great food brings people together. Over the years, we've grown from a neighbourhood gem into a destination restaurant — without ever losing the warmth and attention to detail that made us who we are.</p>
+              <div class="about-stats">
+                <div class="astat"><strong class="eb" onclick="showTxtPop(event,'Stat')">12+</strong><span>Years Open</span></div>
+                <div class="astat"><strong class="eb" onclick="showTxtPop(event,'Stat')">2.4K</strong><span>Monthly Guests</span></div>
+                <div class="astat"><strong class="eb" onclick="showTxtPop(event,'Stat')">98%</strong><span>Return Rate</span></div>
+              </div>
+            </div>
+            <div class="lp-about-img">
+              <div class="ph-img-2 img-block" id="img-about" onclick="selImg(this,'about',event)" style="width:100%;height:100%;min-height:280px">
+                <div class="img-overlay"><div class="img-overlay-chip">Replace Image</div></div>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="add-strip" id="ab-about"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="psec" id="sec-testimonials" onclick="selSec(this,'Testimonials',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">Testimonials</div>
+      <div class="skel-overlay" id="sk-testimonials"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-testimonials"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">Testimonials</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','testimonials',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Improve','testimonials',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Improve</button>
+          <button class="sp-ai-btn" onclick="spAI('Add','testimonials',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('testimonials','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="moveSec('testimonials','down',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Move Down</button>
+          <button class="spa" onclick="dupSec('Testimonials',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('testimonials',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="lp-test">
+        <div class="lpc">
+          <span class="sec-tag">Guest Reviews</span>
+          <h2 class="sec-ttl eb" onclick="showTxtPop(event,'Heading')">What Our Guests Say</h2>
+          <div class="test-grid">
+            <div class="test-card">
+              <div class="t-stars">★★★★★</div>
+              <div class="t-q eb" onclick="showTxtPop(event,'Quote')">"D'Palace is simply the finest dining experience in the city. The food, the ambiance, the service — every visit feels like a truly special occasion."</div>
+              <div class="t-auth">
+                <div class="t-av" style="background:linear-gradient(135deg,#B8965A,#D4AF72)">SJ</div>
+                <div><div class="t-nm eb" onclick="showTxtPop(event,'Name')">Sarah Johnson</div><div class="t-rl">Regular Guest · 4 years</div></div>
+              </div>
+            </div>
+            <div class="test-card">
+              <div class="t-stars">★★★★★</div>
+              <div class="t-q eb" onclick="showTxtPop(event,'Quote')">"We celebrated our anniversary here and it was beyond perfect. The tasting menu is extraordinary and the sommelier's wine pairings were impeccable."</div>
+              <div class="t-auth">
+                <div class="t-av" style="background:linear-gradient(135deg,#8B6F3A,#B8965A)">MR</div>
+                <div><div class="t-nm eb" onclick="showTxtPop(event,'Name')">Marcus Rodriguez</div><div class="t-rl">Special Occasions Guest</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="add-strip" id="ab-testimonials"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="psec" id="sec-faq" onclick="selSec(this,'FAQ',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">FAQ</div>
+      <div class="skel-overlay" id="sk-faq"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-faq"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">FAQ Section</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','faq',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Add Question','faq',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Q</button>
+          <button class="sp-ai-btn" onclick="spAI('Improve','faq',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Improve</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('faq','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="moveSec('faq','down',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>Move Down</button>
+          <button class="spa" onclick="dupSec('FAQ',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('faq',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="lp-faq">
+        <div class="lpc">
+          <span class="sec-tag">FAQ</span>
+          <h2 class="sec-ttl eb" onclick="showTxtPop(event,'Heading')">Frequently Asked Questions</h2>
+          <div class="faq-list">
+            <div class="faq-it" onclick="toggleFaq(this)">
+              <div class="faq-q">Do I need a reservation? <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+              <div class="faq-a">We highly recommend booking in advance, especially for weekends and special occasions. Reservations can be made online or by calling us directly.</div>
+            </div>
+            <div class="faq-it" onclick="toggleFaq(this)">
+              <div class="faq-q">Do you cater for dietary requirements? <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+              <div class="faq-a">Absolutely. Our kitchen is happy to accommodate vegetarian, vegan, gluten-free, and allergy-specific requirements. Please let us know when booking.</div>
+            </div>
+            <div class="faq-it" onclick="toggleFaq(this)">
+              <div class="faq-q">Can I host a private event at D'Palace? <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+              <div class="faq-a">Yes! We offer private dining rooms for events from 10 to 100 guests. Contact our events team for a bespoke proposal tailored to your occasion.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="add-strip" id="ab-faq"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+    <!-- CTA -->
+    <div class="psec" id="sec-cta" onclick="selSec(this,'CTA',event)">
+      <div class="psec-ring"></div>
+      <div class="sec-lbl">CTA</div>
+      <div class="skel-overlay" id="sk-cta"><div class="skel-spin"></div><div class="skel-txt">Regenerating…</div></div>
+      <div class="sec-popup" id="stb-cta"><div class="txt-pop-arrow" style="top:-5px;left:20px;width:10px;height:10px;position:absolute;background:#fff;border:1px solid rgba(14,21,35,.08);border-right:none;border-bottom:none;transform:rotate(45deg);z-index:3"></div><div class="sec-popup-inner">
+        <div class="sp-head"><span class="sp-name">CTA Section</span><button class="sp-close" onclick="closeSecPopup(event)">✕</button></div>
+        <div class="sp-ai-row">
+          <button class="sp-ai-btn" onclick="spAI('Regenerate','cta',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regen</button>
+          <button class="sp-ai-btn" onclick="spAI('Stronger CTA','cta',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Power Up</button>
+          <button class="sp-ai-btn" onclick="spAI('SEO','cta',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO</button>
+        </div>
+        <div class="sp-actions">
+          <button class="spa" onclick="moveSec('cta','up',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>Move Up</button>
+          <button class="spa" onclick="dupSec('CTA',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicate</button>
+          <div class="sp-div"></div>
+          <button class="spa red" onclick="delSec('cta',event)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete Section</button>
+        </div>
+      </div></div><!-- /sec-popup-inner -->
+      <div class="lp-cta">
+        <div class="cta-inner">
+          <h2 class="eb" onclick="showTxtPop(event,'Heading')">Ready for an Unforgettable Evening?</h2>
+          <p class="eb" onclick="showTxtPop(event,'Paragraph')">Join thousands of guests who have made D'Palace their favourite dining destination. Reserve your table today and experience what sets us apart.</p>
+          <div class="cta-btns">
+            <button class="cta-p eb" onclick="showTxtPop(event,'Button')">Reserve a Table</button>
+            <button class="cta-s eb" onclick="showTxtPop(event,'Button')">View the Menu →</button>
+          </div>
+          <div class="cta-note eb" onclick="showTxtPop(event,'Label')">Open Tuesday – Sunday · 12pm–3pm · 6pm–11pm</div>
+        </div>
+      </div>
+      <div class="add-strip" id="ab-cta"><div class="add-strip-inner"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Section Below</div></div>
+    </div>
+
+  </div><!-- /canvas-frame -->
+  <div class="canvas-hint"><div class="canvas-hint-txt">Click any <span>text</span> or <span>section</span> to edit with AI</div></div>
+</div><!-- /canvas-area -->
+</div><!-- /main -->
+
+<!-- TEXT AI POPUP — rebuilt rich version -->
+<div class="txt-pop" id="txtPop">
+  <div class="txt-pop-arrow" id="txtPopArrow"></div>
+  <div class="txt-pop-inner">
+    <!-- Command bar -->
+    <div class="tp-cmd">
+      <div class="tp-cmd-icon">✦</div>
+      <div class="tp-cmd-wrap">
+        <input class="tp-cmd-input" id="tp-inp" placeholder="Tell AI what to do…" onkeydown="tpKey(event)">
+        <span class="tp-cmd-badge" id="tp-tag">Text</span>
+        <button class="tp-cmd-send" onclick="sendTpInst()">
+          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Quick AI chips -->
+    <div class="tp-chips">
+      <button class="tp-chip ai" onclick="sendChip('Make it shorter')">Shorter</button>
+      <button class="tp-chip ai" onclick="sendChip('Make it more persuasive')">Persuasive</button>
+      <button class="tp-chip ai" onclick="sendChip('Make it professional')">Professional</button>
+      <button class="tp-chip ai" onclick="sendChip('Make it bold and punchy')">Bold</button>
+      <button class="tp-chip ai" onclick="sendChip('Simplify this')">Simplify</button>
+    </div>
+    <!-- Edit group -->
+    <div class="tp-group">
+      <span class="tp-group-label">Edit</span>
+      <button class="tpa" onclick="editInline()">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        <div class="tpa-lbl">Edit directly<span class="tpa-hint">Click to type inline</span></div>
+      </button>
+      <button class="tpa ai-a" onclick="tpAct('Expand')">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></div>
+        <div class="tpa-lbl">Expand<span class="tpa-hint">Add more detail & depth</span></div>
+      </button>
+      <button class="tpa ai-a" onclick="tpAct('Fix Grammar')">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="tpa-lbl">Fix Grammar<span class="tpa-hint">Auto-correct & polish</span></div>
+      </button>
+    </div>
+    <div class="tp-sep"></div>
+    <!-- Rewrite group -->
+    <div class="tp-group">
+      <span class="tp-group-label">Rewrite</span>
+      <button class="tpa ai-a" id="tpa-rw" onclick="showRwSub(event)">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
+        <div class="tpa-lbl">Rewrite style<span class="tpa-hint">Shorter · Clearer · Persuasive</span></div>
+        <span class="tpa-arr">›</span>
+      </button>
+      <button class="tpa ai-a" id="tpa-tone" onclick="showToneSub(event)">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+        <div class="tpa-lbl">Change tone<span class="tpa-hint">Friendly · Pro · Bold · Casual</span></div>
+        <span class="tpa-arr">›</span>
+      </button>
+      <button class="tpa ai-a" onclick="tpAct('Regenerate')">
+        <div class="tpa-ic"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10"/><path d="M2 12A10 10 0 0 0 12 22"/><path d="M22 12l-3 3-3-3"/><path d="M2 12l3-3 3 3"/></svg></div>
+        <div class="tpa-lbl">Regenerate<span class="tpa-hint">Full fresh AI variation</span></div>
+      </button>
+    </div>
+    <!-- Footer -->
+    <div class="tp-sep"></div>
+    <div class="tp-footer">
+      <button class="tp-foot-btn" onclick="tpAct('Translate')">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Translate
+      </button>
+      <button class="tp-foot-btn" onclick="tpAct('SEO')">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        SEO Boost
+      </button>
+      <button class="tp-foot-btn danger" onclick="closeTxtPop()" style="flex:0;padding:6px 10px;color:var(--txt3)">
+        <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- REWRITE SUBMENU -->
+
+<!-- REWRITE SUBMENU -->
+<div class="rw-sub" id="rwSub">
+  <button class="rw-item" onclick="rwAct('Shorter')">✂️ Make Shorter</button>
+  <button class="rw-item" onclick="rwAct('Clearer')">💡 Make Clearer</button>
+  <button class="rw-item" onclick="rwAct('More Persuasive')">💪 More Persuasive</button>
+  <button class="rw-item" onclick="rwAct('More Professional')">👔 More Professional</button>
+</div>
+
+<!-- TONE SUBMENU -->
+<div class="rw-sub" id="toneSub">
+  <button class="rw-item" onclick="toneAct('Friendly')">😊 Friendly</button>
+  <button class="rw-item" onclick="toneAct('Professional')">👔 Professional</button>
+  <button class="rw-item" onclick="toneAct('Bold')">🔥 Bold</button>
+  <button class="rw-item" onclick="toneAct('Casual')">👋 Casual</button>
+  <button class="rw-item" onclick="toneAct('Urgent')">⚡ Urgent</button>
+  <button class="rw-item" onclick="toneAct('Inspiring')">✨ Inspiring</button>
+</div>
+
+<!-- IMAGE TOOLBAR -->
+<div class="img-tb" id="imgTb">
+  <button class="itb ai" onclick="openImgModal('replace')">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:11px;height:11px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Replace
+  </button>
+  <div class="itb-d"></div>
+  <button class="itb ai" onclick="openImgModal('generate')">✦ Generate</button>
+  <div class="itb-d"></div>
+  <button class="itb" onclick="imgFakeAct('Crop applied')">✂ Crop</button>
+  <button class="itb" onclick="imgFakeAct('Background removed')">🪄 Remove BG</button>
+  <div class="itb-d"></div>
+  <button class="itb rd" onclick="closeImgTb()">✕</button>
+</div>
+
+<!-- IMAGE MODAL -->
+<div class="modal-bg" id="imgModal">
+  <div class="modal" style="max-width:500px">
+    <h3 id="imgModalTitle">Replace Image</h3>
+    <p id="imgModalDesc">Choose from the library or generate with AI</p>
+    <div class="img-picker" id="imgPicker">
+      <div class="img-pick-item ph-img-1" onclick="pickImg(this,0)"></div>
+      <div class="img-pick-item ph-img-2" onclick="pickImg(this,1)"></div>
+      <div class="img-pick-item ph-img-3" onclick="pickImg(this,2)"></div>
+      <div class="img-pick-item ph-img-4" onclick="pickImg(this,3)"></div>
+      <div class="img-pick-item ph-img-5" onclick="pickImg(this,4)"></div>
+      <div class="img-pick-item ph-img-6" onclick="pickImg(this,5)"></div>
+    </div>
+    <div id="genImgSection" style="display:none;margin-bottom:14px">
+      <div class="gen-inp-row">
+        <input class="gen-inp" id="genImgInp" placeholder="Describe the image… e.g. 'modern office team'">
+        <button class="btn btn-grn" onclick="genImg()">Generate</button>
+      </div>
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal('imgModal')">Cancel</button>
+      <button class="btn btn-grn" id="imgModalConfirm" onclick="confirmImg()" disabled style="opacity:.45;cursor:not-allowed">Apply Image</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-bg" id="delModal">
+  <div class="modal">
+    <h3>Delete Section?</h3>
+    <p>This section will be removed from your page. You can undo with Ctrl+Z.</p>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal('delModal')">Cancel</button>
+      <button class="btn" style="background:var(--red);color:#fff;border-radius:var(--r)" onclick="confirmDel()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- GENERATING OVERLAY -->
+<div class="gen-overlay" id="genOverlay">
+  <div class="gen-card">
+    <div class="gen-spinner"></div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:5px;font-family:'Inter',-apple-system,sans-serif" id="genTitle">Regenerating…</div>
+    <div style="font-size:12px;color:var(--txt2);font-family:'DM Sans',system-ui,sans-serif" id="genSub">ERA AI is writing a new version</div>
+    <div class="gen-prog"><div class="gen-bar" id="genBar"></div></div>
+    <button class="gen-stop" onclick="stopGen()">Stop</button>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+let currentSec = null;
+let currentTxtEl = null;
+let currentImgEl = null;
+let secToDelete = null;
+let selectedImgIdx = null;
+let genTimer = null;
+
+const rwVariants = {
+  'Shorter':{'Heading':"D'Palace Story",'Paragraph':'Committed to excellence and integrity in everything we do.','Quote':'"Simply outstanding."','default':'Shorter version.'},
+  'Clearer':{'Heading':"The Story Behind D'Palace",'Paragraph':"We're driven by values, passion, and deep commitment to excellence.",'Quote':'"Made everything crystal clear."','default':'Clearer version.'},
+  'More Persuasive':{'Heading':"Why D'Palace Changes Everything",'Paragraph':"Don't just take our word — the results speak for themselves. Join 2,400+ businesses that trust D'Palace.",'Quote':'"Best decision we made this year."','default':'More compelling version.'},
+  'More Professional':{'Heading':"The D'Palace Legacy of Excellence",'Paragraph':"D'Palace delivers measurable outcomes through strategic expertise, operational excellence, and client-centric innovation.",'Quote':'"Consistently exceeds our expectations and delivers results."','default':'Professional version.'},
+};
+const toneVariants = {
+  'Friendly':"Hey! We're D'Palace — we're so glad you're here. We love what we do and we'd love to help you too! 😊",
+  'Professional':"D'Palace delivers enterprise-grade solutions with a commitment to measurable excellence and strategic outcomes.",
+  'Bold':"D'Palace doesn't follow trends — we set them. If you're ready to dominate your market, we're ready.",
+  'Casual':"We're D'Palace. We build great stuff and work with great people. Pretty simple, honestly.",
+  'Urgent':"Your competitors are moving fast. D'Palace gets you ahead — before the window closes.",
+  'Inspiring':"Every great journey starts with a single step. D'Palace is here to walk alongside you, every step of the way.",
+};
+
+// ── SECTION SELECT — smart fixed positioning ──
+function selSec(el, name, e) {
+  if(!e) return;
+  if(e.target.closest('.eb') || e.target.closest('[contenteditable]') || e.target.closest('.img-block') || e.target.closest('.faq-it') || e.target.closest('.sp-actions') || e.target.closest('.sp-ai-row') || e.target.closest('.sp-head')) return;
+  e.stopPropagation();
+
+  if(currentSec && currentSec !== el) {
+    currentSec.classList.remove('sel');
+    const oid = currentSec.id.replace('sec-','');
+    const op = document.getElementById('stb-'+oid);
+    if(op) op.classList.remove('show');
+  }
+  if(currentSec === el) {
+    el.classList.remove('sel');
+    const id = el.id.replace('sec-','');
+    const p = document.getElementById('stb-'+id);
+    if(p) p.classList.remove('show');
+    currentSec = null;
+    return;
+  }
+  currentSec = el;
+  el.classList.add('sel');
+  const id = el.id.replace('sec-','');
+  const popup = document.getElementById('stb-'+id);
+  if(popup) {
+    popup.classList.add('show');
+    // Smart fixed positioning: near click point, inside viewport
+    const PW = 214, PH = 280;
+    const HEADER_H = 48;
+    const secRect = el.getBoundingClientRect();
+    // Position below the top of the section, near where user clicked
+    let top = Math.max(HEADER_H + 8, secRect.top + 8);
+    // prefer right side of section unless too close to right edge
+    let left = secRect.right - PW - 12;
+    let anchorRight = true;
+    if(left < secRect.left + 12) { left = secRect.left + 12; anchorRight = false; }
+    if(left + PW > window.innerWidth - 8) { left = window.innerWidth - PW - 8; anchorRight = true; }
+    if(left < 8) { left = 8; anchorRight = false; }
+    if(top + PH > window.innerHeight - 8) top = window.innerHeight - PH - 8;
+    popup.style.top = top + 'px';
+    popup.style.left = left + 'px';
+    popup.classList.toggle('anchor-right', anchorRight);
+    // arrow horizontal offset
+    const arrow = popup.querySelector('.txt-pop-arrow');
+    if(arrow) arrow.style.left = anchorRight ? 'auto' : '18px', arrow.style.right = anchorRight ? '18px' : 'auto';
+  }
+}
+
+function closeSecPopup(e) {
+  e && e.stopPropagation();
+  if(currentSec) {
+    const id = currentSec.id.replace('sec-','');
+    const p = document.getElementById('stb-'+id);
+    if(p) p.classList.remove('show');
+    currentSec.classList.remove('sel');
+    currentSec = null;
+  }
+}
+
+document.addEventListener('click', function(e) {
+  if(!e.target.closest('.psec') && !e.target.closest('.txt-pop') && !e.target.closest('.rw-sub') && !e.target.closest('.img-tb')) {
+    if(currentSec) {
+      const id = currentSec.id.replace('sec-','');
+      const p = document.getElementById('stb-'+id);
+      if(p) p.classList.remove('show');
+      currentSec.classList.remove('sel');
+      currentSec = null;
+    }
+    closeTxtPop();
+    closeAllSubs();
+    closeImgTb();
+  }
+});
+
+// ── SECTION AI QUICK ACTIONS ──
+function spAI(action, secId, e) {
+  e && e.stopPropagation();
+  if(action === 'Regenerate') {
+    regenSec(secId, secId.charAt(0).toUpperCase()+secId.slice(1), e);
+    closeSecPopup(e);
+  } else {
+    closeSecPopup(e);
+    showGen(`Applying: ${action}…`, `ERA AI is enhancing your ${secId} section`);
+  }
+}
+
+// ── TEXT POPOVER — pixel-tight, arrow-anchored ──
+function showTxtPop(e, type) {
+  e.stopPropagation();
+  currentTxtEl = e.currentTarget;
+  const pop = document.getElementById('txtPop');
+  const arrow = document.getElementById('txtPopArrow');
+  document.getElementById('tp-tag').textContent = type;
+  document.getElementById('tp-inp').value = '';
+  pop.classList.add('show');
+  const r = currentTxtEl.getBoundingClientRect();
+  const PW = 236, PH = 330, ARROW = 10, GAP = 6;
+  const HDR = 48;
+  // Default: below element, arrow points up
+  let top = r.bottom + GAP;
+  let left = r.left;
+  let arrowTop = true;
+  // Flip above if not enough room below
+  if(top + PH > window.innerHeight - 8) { top = r.top - PH - GAP; arrowTop = false; }
+  if(top < HDR + 4) top = HDR + 4;
+  // Clamp horizontal
+  if(left + PW > window.innerWidth - 8) left = window.innerWidth - PW - 8;
+  if(left < 8) left = 8;
+  pop.style.top = top + 'px';
+  pop.style.left = left + 'px';
+  // Position arrow relative to element center
+  if(arrow) {
+    const arrowLeft = Math.min(Math.max(r.left + r.width/2 - left - ARROW/2, 10), PW - 26);
+    arrow.style.left = arrowLeft + 'px';
+    arrow.style.top = arrowTop ? '-5px' : 'auto';
+    arrow.style.bottom = arrowTop ? 'auto' : '-5px';
+    arrow.style.transform = arrowTop ? 'rotate(45deg)' : 'rotate(225deg)';
+  }
+  setTimeout(() => document.getElementById('tp-inp').focus(), 30);
+}
+function closeTxtPop() {
+  document.getElementById('txtPop').classList.remove('show');
+  closeAllSubs();
+  if(currentTxtEl) {
+    currentTxtEl.contentEditable = 'false';
+    currentTxtEl.classList.remove('sel-txt');
+    currentTxtEl = null;
+  }
+}
+function tpKey(e) {
+  if(e.key === 'Escape') closeTxtPop();
+  if(e.key === 'Enter') { e.preventDefault(); sendTpInst(); }
+}
+function sendTpInst() {
+  const v = document.getElementById('tp-inp').value.trim();
+  if(v) { closeTxtPop(); showGen(`Applying: "${v}"`, 'Writing based on your instruction'); }
+  else closeTxtPop();
+}
+function editInline() {
+  if(!currentTxtEl) return;
+  const el = currentTxtEl;
+  closeTxtPop();
+  el.contentEditable = 'true';
+  el.classList.add('sel-txt');
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  el.onkeydown = function(ev) {
+    if(ev.key === 'Enter') { ev.preventDefault(); el.contentEditable='false'; el.classList.remove('sel-txt'); el.onkeydown=null; toast('✓','Edit saved','ok'); }
+    if(ev.key === 'Escape') { el.contentEditable='false'; el.classList.remove('sel-txt'); el.onkeydown=null; }
+  };
+}
+function showRwSub(e) {
+  e.stopPropagation();
+  const sub = document.getElementById('rwSub');
+  const r = document.getElementById('tpa-rw').getBoundingClientRect();
+  sub.style.top = r.top + 'px';
+  sub.style.left = (r.right + 5) + 'px';
+  sub.classList.add('show');
+  document.getElementById('toneSub').classList.remove('show');
+}
+function showToneSub(e) {
+  e.stopPropagation();
+  const sub = document.getElementById('toneSub');
+  const r = document.getElementById('tpa-tone').getBoundingClientRect();
+  sub.style.top = r.top + 'px';
+  sub.style.left = (r.right + 5) + 'px';
+  sub.classList.add('show');
+  document.getElementById('rwSub').classList.remove('show');
+}
+function closeAllSubs() {
+  document.getElementById('rwSub').classList.remove('show');
+  document.getElementById('toneSub').classList.remove('show');
+}
+function rwAct(style) {
+  const tag = document.getElementById('tp-tag').textContent;
+  closeAllSubs(); closeTxtPop();
+  if(currentTxtEl) { const v = rwVariants[style]; currentTxtEl.textContent = v[tag]||v['default']; currentTxtEl=null; }
+  toast('✦',`Rewritten: ${style}`,'ok');
+}
+function toneAct(tone) {
+  closeAllSubs(); closeTxtPop();
+  if(currentTxtEl) { currentTxtEl.textContent = toneVariants[tone]||`${tone} tone applied.`; currentTxtEl=null; }
+  toast('🎭',`Tone: ${tone}`,'ok');
+}
+function tpAct(action) {
+  closeTxtPop();
+  if(action==='Regenerate') { showGen('Regenerating text…','Writing a fresh variation'); return; }
+  if(action==='Expand' && currentTxtEl) {
+    currentTxtEl.textContent += ' Our dedication to innovation and client success has earned us recognition as a leading provider, with a proven track record of delivering exceptional results.';
+    currentTxtEl=null; toast('📝','Text expanded!','ok'); return;
+  }
+  if(action==='Fix Grammar') { toast('✓','Grammar checked — all good!','ok'); return; }
+  toast('✦',`${action} applied!`,'ok');
+}
+
+// ── IMAGE ACTIONS ──
+function selImg(el, name, e) {
+  e && e.stopPropagation();
+  if(currentImgEl && currentImgEl!==el) currentImgEl.classList.remove('sel-img');
+  currentImgEl = el;
+  el.classList.add('sel-img');
+  const tb = document.getElementById('imgTb');
+  const r = el.getBoundingClientRect();
+  tb.style.top = (r.top - 42) + 'px';
+  tb.style.left = r.left + 'px';
+  tb.classList.add('show');
+}
+function closeImgTb() {
+  document.getElementById('imgTb').classList.remove('show');
+  if(currentImgEl) { currentImgEl.classList.remove('sel-img'); currentImgEl=null; }
+}
+function openImgModal(mode) {
+  selectedImgIdx=null;
+  const conf = document.getElementById('imgModalConfirm');
+  conf.disabled=true; conf.style.opacity='.45'; conf.style.cursor='not-allowed';
+  document.querySelectorAll('.img-pick-item').forEach(i=>i.classList.remove('sel'));
+  if(mode==='replace') {
+    document.getElementById('imgModalTitle').textContent='Replace Image';
+    document.getElementById('imgModalDesc').textContent='Choose a new image from the library';
+    document.getElementById('imgPicker').style.display='grid';
+    document.getElementById('genImgSection').style.display='none';
+  } else {
+    document.getElementById('imgModalTitle').textContent='Generate Image with AI';
+    document.getElementById('imgModalDesc').textContent='Describe what you want — ERA AI will create it';
+    document.getElementById('imgPicker').style.display='none';
+    document.getElementById('genImgSection').style.display='block';
+  }
+  document.getElementById('imgModal').classList.add('show');
+}
+function pickImg(el, idx) {
+  document.querySelectorAll('.img-pick-item').forEach(i=>i.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedImgIdx=idx;
+  const c=document.getElementById('imgModalConfirm');
+  c.disabled=false; c.style.opacity='1'; c.style.cursor='pointer';
+}
+function genImg() {
+  const v=document.getElementById('genImgInp').value.trim();
+  if(!v){toast('⚠️','Describe the image first','warn');return;}
+  closeModal('imgModal');
+  showGen('Generating Image…','ERA AI is creating your image');
+  setTimeout(()=>{
+    if(currentImgEl){const cs=['ph-img-3','ph-img-4','ph-img-5','ph-img-6'];const c=cs[Math.floor(Math.random()*cs.length)];currentImgEl.className=currentImgEl.className.replace(/ph-img-\d/,'')+' '+c;}
+    toast('✦','Image generated!','ok');
+  },2200);
+}
+function confirmImg() {
+  closeModal('imgModal');
+  const cs=['ph-img-1','ph-img-2','ph-img-3','ph-img-4','ph-img-5','ph-img-6'];
+  if(selectedImgIdx!==null&&currentImgEl) currentImgEl.className=currentImgEl.className.replace(/ph-img-\d/,'')+' '+cs[selectedImgIdx];
+  toast('🖼','Image replaced!','ok');
+}
+function imgFakeAct(msg){closeImgTb();toast('✓',msg,'ok');}
+
+// ── SECTION ACTIONS ──
+function regenSec(id, name, e) {
+  if(e) e.stopPropagation();
+  const sk = document.getElementById('sk-'+id);
+  if(!sk) return;
+  closeTxtPop();
+  sk.classList.add('show');
+  setTimeout(()=>{sk.classList.remove('show');toast('✦',`${name} regenerated!`,'ok');},1700);
+}
+function moveSec(id, dir, e) { if(e)e.stopPropagation(); toast('↕',`Moved ${dir}`,'inf'); }
+function dupSec(name, e) { if(e)e.stopPropagation(); toast('⧉',`${name} duplicated`,'ok'); }
+function addBelow(id, e) {
+  if(e)e.stopPropagation();
+  const ab=document.getElementById('ab-'+id);
+  if(ab){ab.classList.add('show');ab.onclick=()=>{toast('➕','Section added','ok');ab.classList.remove('show');};setTimeout(()=>ab.classList.remove('show'),3000);}
+}
+function delSec(id, e) { if(e)e.stopPropagation(); secToDelete=id; document.getElementById('delModal').classList.add('show'); }
+function confirmDel() {
+  closeModal('delModal');
+  const el=document.getElementById('sec-'+secToDelete);
+  if(el){el.style.transition='all .3s';el.style.opacity='0';el.style.maxHeight='0';el.style.overflow='hidden';setTimeout(()=>el.remove(),320);}
+  toast('🗑','Section deleted · Ctrl+Z to undo','warn');
+  secToDelete=null;
+}
+
+// ── GENERATION ──
+function showGen(title, sub) {
+  document.getElementById('genTitle').textContent=title;
+  document.getElementById('genSub').textContent=sub;
+  const bar=document.getElementById('genBar');
+  bar.style.animation='none';void bar.offsetWidth;bar.style.animation='progress 2s ease forwards';
+  document.getElementById('genOverlay').classList.add('show');
+  clearTimeout(genTimer);
+  genTimer=setTimeout(()=>{document.getElementById('genOverlay').classList.remove('show');toast('✓',title.replace('…','')+' done!','ok');},2200);
+}
+function fullRegen(){showGen('Regenerating Full Page…','ERA AI is rebuilding all sections');}
+function stopGen(){clearTimeout(genTimer);document.getElementById('genOverlay').classList.remove('show');toast('⬛','Stopped','warn');}
+
+// ── MISC ──
+function toggleFaq(el){el.classList.toggle('open');}
+function setDev(type, btn) {
+  document.querySelectorAll('.dev-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const f=document.getElementById('canvasFrame');
+  const a=document.getElementById('canvasArea');
+  if(type==='mobile'){f.style.maxWidth='390px';f.style.margin='20px auto';a.style.background='#DADDE5';toast('📱','Mobile view','inf');}
+  else if(type==='tablet'){f.style.maxWidth='768px';f.style.margin='20px auto';a.style.background='#DADDE5';toast('⬛','Tablet view','inf');}
+  else{f.style.maxWidth='';f.style.margin='';a.style.background='#fff';}
+}
+function toggleBA(mode, btn) {
+  document.querySelectorAll('.ba-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.psec').forEach(s=>s.classList.toggle('ba-mode',mode==='before'));
+  toast(mode==='before'?'◀':'▶',mode==='before'?'Showing original draft':'Showing AI version','inf');
+}
+// ── MODE: Edit / Preview ──
+let currentMode = 'edit';
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('segEdit').classList.toggle('active', mode==='edit');
+  document.getElementById('segPreview').classList.toggle('active', mode==='preview');
+  const devGrp = document.getElementById('devGrp');
+  devGrp.classList.toggle('visible', mode==='preview');
+  document.querySelectorAll('.psec-ring,.sec-lbl,.add-strip,.eb').forEach(el=>{
+    el.style.pointerEvents = mode==='preview' ? 'none' : '';
+    if(el.classList.contains('psec-ring')||el.classList.contains('sec-lbl')||el.classList.contains('add-strip'))
+      el.style.opacity = mode==='preview' ? '0' : '';
+  });
+  toast(mode==='preview'?'👁':'✏️', mode==='preview'?'Preview mode':'Edit mode','inf');
+}
+// ── STATUS DOT ──
+const statusStates = {
+  ai:      {cls:'ai',     txt:'Generated'},
+  saved:   {cls:'',       txt:'Saved'},
+  saving:  {cls:'saving', txt:'Saving…'},
+  unsaved: {cls:'unsaved',txt:'Unsaved'},
+};
+let autosaveTimer, autosaveSeconds = 3;
+function setStatus(state) {
+  const s = statusStates[state] || statusStates.saved;
+  const c = document.getElementById('statusCircle');
+  const t = document.getElementById('statusTxt');
+  if(!c||!t) return;
+  c.className = 'status-dot-circle ' + s.cls;
+  t.textContent = s.txt;
+  if(state==='unsaved') {
+    clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(()=>{ setStatus('saving'); setTimeout(()=>{ setStatus('saved'); startAutosaveTicker(); },900); },1400);
+  }
+}
+let tickerInterval;
+function startAutosaveTicker() {
+  clearInterval(tickerInterval);
+  autosaveSeconds = 0;
+  const el = document.getElementById('autosaveTxt');
+  tickerInterval = setInterval(()=>{
+    autosaveSeconds++;
+    if(!el) return;
+    if(autosaveSeconds < 60) el.textContent = `Saved ${autosaveSeconds}s ago`;
+    else el.textContent = 'Saved just now';
+  },1000);
+}
+function act(type) {
+  const msgs={'undo':['↩','Undone','inf'],'redo':['↪','Redone','inf'],'draft':['💾','Saved as draft','ok'],'preview':['👁','Opening preview…','inf'],'add-sec':['➕','Add section — coming soon','inf']};
+  const m=msgs[type];
+  if(m) toast(m[0],m[1],m[2]);
+  if(type==='publish'){
+    setStatus('saved');
+    document.getElementById('publishBtn').textContent='Update';
+    toast('🚀','Page published!','ok');
+  }
+  if(type==='undo'||type==='redo') setStatus('unsaved');
+}
+// init autosave ticker on load
+startAutosaveTicker();
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+// ── TOASTS ──
+function toast(icon, msg, type) {
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="t-ico">${icon}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>{if(t.parentNode)t.parentNode.removeChild(t);},3000);
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){closeTxtPop();closeAllSubs();closeImgTb();closeModal('delModal');closeModal('imgModal');document.getElementById('genOverlay').classList.remove('show');}
+  if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();act('undo');}
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();act('draft');}
+});
+
+
+
+// ── QUICK CHIP SEND ──
+function sendChip(instruction) {
+  closeTxtPop();
+  showGen(`AI: "${instruction}"`, 'Applying instruction to your content');
+}
+
+setTimeout(()=>toast('✦','Click any section or text to edit with AI','inf'),500);
+// trigger autosave on any editable interaction
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('eb') && e.target.id !== 'pageNm') setStatus('unsaved');
+});
+</script>
+
+<!-- RIGHT AI SIDEBAR -->
+<div class="rsb" id="rsb">
+  <div class="rsb-hdr">
+    <div class="rsb-hdr-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <span class="rsb-title">ERA AI</span>
+    <div class="rsb-menu-wrap">
+      <button class="rsb-hdr-btn" id="rsbDotBtn" onclick="rsbToggleMenu(event)" title="Options">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      </button>
+      <div class="rsb-menu" id="rsbMenu">
+        <button class="rsb-menu-item" onclick="rsbMenuAct('new')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New chat</button>
+        <button class="rsb-menu-item" onclick="rsbMenuAct('popout')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><path d="M10 14L21 3"/><path d="M21 13v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7"/></svg>Pop out panel</button>
+        <button class="rsb-menu-item" onclick="rsbMenuAct('dock')"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>Dock to sidebar</button>
+      </div>
+    </div>
+    <button class="rsb-hdr-btn" onclick="rsbClose()" title="Close"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="rsb-actions" id="rsbActions">
+    <button class="rsb-qa" onclick="rsbShowPanel('strengthen')"><svg width="13" height="13" fill="none" stroke="#5B4FE8" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Strengthen copy</button>
+    <button class="rsb-qa" onclick="rsbShowSectionPicker()"><svg width="13" height="13" fill="none" stroke="#5B4FE8" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add section</button>
+    <button class="rsb-qa" onclick="rsbShowPanel('seo')"><svg width="13" height="13" fill="none" stroke="#5B4FE8" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Optimize SEO</button>
+    <button class="rsb-qa" onclick="rsbShowPanel('tone')"><svg width="13" height="13" fill="none" stroke="#5B4FE8" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Polish tone</button>
+    <button class="rsb-qa" onclick="rsbShowPanel('regenerate')"><svg width="13" height="13" fill="none" stroke="#5B4FE8" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Regenerate</button>
+  </div>
+  <div class="rsb-picker" id="rsbPicker" style="display:none">
+    <div class="rsb-picker-hdr">
+      <button class="rsb-picker-back" onclick="rsbCloseSectionPicker()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="rsb-picker-title">Add Section</span>
+    </div>
+    <div class="rsb-search-wrap">
+      <div class="rsb-search">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="rsbSearchInp" type="text" placeholder="Search sections…" oninput="rsbFilter(this.value)">
+      </div>
+    </div>
+    <div class="rsb-rec" id="rsbRec">
+      <div class="rsb-rec-lbl">✦ AI Recommended</div>
+      <div class="rsb-rec-items">
+        <button class="rsb-rec-item" onclick="rsbAddSec('testimonials','Testimonials')"><span class="rsb-rec-item-ico">💬</span><span>Add Testimonials</span><span class="rsb-rec-item-arrow">›</span></button>
+        <button class="rsb-rec-item" onclick="rsbAddSec('cta','Call to Action')"><span class="rsb-rec-item-ico">🎯</span><span>Add Call to Action</span><span class="rsb-rec-item-arrow">›</span></button>
+      </div>
+    </div>
+    <div class="rsb-cats">
+      <button class="rsb-cat-btn active" onclick="rsbSetCat('all',this)">All</button>
+      <button class="rsb-cat-btn" onclick="rsbSetCat('essentials',this)">Essentials</button>
+      <button class="rsb-cat-btn" onclick="rsbSetCat('trust',this)">Trust</button>
+      <button class="rsb-cat-btn" onclick="rsbSetCat('conversion',this)">Conversion</button>
+      <button class="rsb-cat-btn" onclick="rsbSetCat('content',this)">Content</button>
+    </div>
+    <div class="rsb-grid" id="rsbGrid">
+      <button class="rsb-sec-card" data-cat="essentials" data-name="hero" onclick="rsbAddSec('hero','Hero')"><span class="rsb-card-ico">🏠</span><div class="rsb-card-info"><span class="rsb-card-name">Hero</span><span class="rsb-card-desc">Bold headline + CTA above the fold</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="essentials" data-name="features" onclick="rsbAddSec('features','Features')"><span class="rsb-card-ico">⭐</span><div class="rsb-card-info"><span class="rsb-card-name">Features</span><span class="rsb-card-desc">Highlight your key benefits</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="essentials" data-name="about" onclick="rsbAddSec('about','About')"><span class="rsb-card-ico">📖</span><div class="rsb-card-info"><span class="rsb-card-name">About</span><span class="rsb-card-desc">Tell your brand story</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="essentials" data-name="faq" onclick="rsbAddSec('faq','FAQ')"><span class="rsb-card-ico">❓</span><div class="rsb-card-info"><span class="rsb-card-name">FAQ</span><span class="rsb-card-desc">Answer common questions</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="trust" data-name="testimonials" onclick="rsbAddSec('testimonials','Testimonials')"><span class="rsb-card-ico">💬</span><div class="rsb-card-info"><span class="rsb-card-name">Testimonials</span><span class="rsb-card-desc">Customer reviews & quotes</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="trust" data-name="logos" onclick="rsbAddSec('logos','Logo Wall')"><span class="rsb-card-ico">🏢</span><div class="rsb-card-info"><span class="rsb-card-name">Logo Wall</span><span class="rsb-card-desc">Show brands you work with</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="trust" data-name="stats" onclick="rsbAddSec('stats','Stats')"><span class="rsb-card-ico">📊</span><div class="rsb-card-info"><span class="rsb-card-name">Stats</span><span class="rsb-card-desc">Numbers that build credibility</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="trust" data-name="team" onclick="rsbAddSec('team','Team')"><span class="rsb-card-ico">👥</span><div class="rsb-card-info"><span class="rsb-card-name">Team</span><span class="rsb-card-desc">Meet the people behind the brand</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="conversion" data-name="cta" onclick="rsbAddSec('cta','Call to Action')"><span class="rsb-card-ico">🎯</span><div class="rsb-card-info"><span class="rsb-card-name">Call to Action</span><span class="rsb-card-desc">Drive signups or purchases</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="conversion" data-name="pricing" onclick="rsbAddSec('pricing','Pricing')"><span class="rsb-card-ico">💰</span><div class="rsb-card-info"><span class="rsb-card-name">Pricing</span><span class="rsb-card-desc">Plans & tiers with clear value</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="conversion" data-name="contact" onclick="rsbAddSec('contact','Contact')"><span class="rsb-card-ico">📧</span><div class="rsb-card-info"><span class="rsb-card-name">Contact</span><span class="rsb-card-desc">Form or map to get in touch</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="content" data-name="gallery" onclick="rsbAddSec('gallery','Gallery')"><span class="rsb-card-ico">🖼</span><div class="rsb-card-info"><span class="rsb-card-name">Gallery</span><span class="rsb-card-desc">Visual showcase of work</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="content" data-name="blog" onclick="rsbAddSec('blog','Blog Posts')"><span class="rsb-card-ico">✍️</span><div class="rsb-card-info"><span class="rsb-card-name">Blog Posts</span><span class="rsb-card-desc">Latest articles or updates</span></div><span class="rsb-card-add">+</span></button>
+      <button class="rsb-sec-card" data-cat="content" data-name="video" onclick="rsbAddSec('video','Video')"><span class="rsb-card-ico">▶️</span><div class="rsb-card-info"><span class="rsb-card-name">Video</span><span class="rsb-card-desc">Embed a demo or explainer</span></div><span class="rsb-card-add">+</span></button>
+    </div>
+  </div>
+  <div class="rsb-panel" id="rsbPanelStrengthen">
+    <div class="rsb-panel-hdr">
+      <button class="rsb-panel-back" onclick="rsbClosePanel()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="rsb-panel-title">Strengthen copy</span>
+    </div>
+    <div class="rsb-panel-content">
+      <div><div class="rsb-sugg-lbl">Suggestions</div><div class="rsb-sugg-items">
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Improve the headline clarity on this section')">✓ Improve headline</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Strengthen the CTA messaging')">✓ Strengthen CTA</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Shorten long paragraphs for impact')">✓ Shorten paragraphs</button>
+      </div></div>
+      <div><div class="rsb-sugg-lbl">Scope</div><div class="rsb-scope">
+        <button class="rsb-scope-btn selected" onclick="event.target.parentElement.querySelectorAll('.rsb-scope-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected')">This section</button>
+        <button class="rsb-scope-btn" onclick="event.target.parentElement.querySelectorAll('.rsb-scope-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected')">Entire page</button>
+      </div></div>
+    </div>
+    <div class="rsb-panel-action"><button class="rsb-action-btn" onclick="rsbExecuteAction('Analyzing your copy for impact…')">Improve now</button></div>
+  </div>
+  <div class="rsb-panel" id="rsbPanelSeo">
+    <div class="rsb-panel-hdr">
+      <button class="rsb-panel-back" onclick="rsbClosePanel()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="rsb-panel-title">Optimize SEO</span>
+    </div>
+    <div class="rsb-panel-content">
+      <div><div class="rsb-sugg-lbl">Improvements</div><div class="rsb-sugg-items">
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Improve the meta description for better CTR')">✓ Meta description</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Fix the heading structure for better SEO')">✓ Heading structure</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Add internal linking opportunities')">✓ Internal links</button>
+      </div></div>
+      <div><div class="rsb-sugg-lbl">Target keyword (optional)</div><input type="text" placeholder="e.g., web design" style="width:100%;padding:8px 10px;border:1px solid #E8ECF0;border-radius:8px;font-size:12px;background:#F7F8FA;outline:none" onfocus="this.style.borderColor='#5B4FE8';this.style.background='#fff'" onblur="this.style.borderColor='#E8ECF0';this.style.background='#F7F8FA'"/></div>
+    </div>
+    <div class="rsb-panel-action"><button class="rsb-action-btn" onclick="rsbExecuteAction('Scanning for SEO improvements…')">Apply updates</button></div>
+  </div>
+  <div class="rsb-panel" id="rsbPanelTone">
+    <div class="rsb-panel-hdr">
+      <button class="rsb-panel-back" onclick="rsbClosePanel()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="rsb-panel-title">Polish tone</span>
+    </div>
+    <div class="rsb-panel-content">
+      <div><div class="rsb-sugg-lbl">Tone style</div><div class="rsb-chips">
+        <button class="rsb-chip" onclick="rsbSelectChip(event)">More persuasive</button>
+        <button class="rsb-chip" onclick="rsbSelectChip(event)">More premium</button>
+        <button class="rsb-chip" onclick="rsbSelectChip(event)">More friendly</button>
+        <button class="rsb-chip" onclick="rsbSelectChip(event)">More concise</button>
+        <button class="rsb-chip" onclick="rsbSelectChip(event)">More professional</button>
+      </div></div>
+      <div><div class="rsb-sugg-lbl">Scope</div><div class="rsb-scope">
+        <button class="rsb-scope-btn selected" onclick="event.target.parentElement.querySelectorAll('.rsb-scope-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected')">This section</button>
+        <button class="rsb-scope-btn" onclick="event.target.parentElement.querySelectorAll('.rsb-scope-btn').forEach(b=>b.classList.remove('selected'));event.target.classList.add('selected')">Entire page</button>
+      </div></div>
+    </div>
+    <div class="rsb-panel-action"><button class="rsb-action-btn" onclick="rsbExecuteAction('Refining your brand voice…')">Apply tone</button></div>
+  </div>
+  <div class="rsb-panel" id="rsbPanelRegenerate">
+    <div class="rsb-panel-hdr">
+      <button class="rsb-panel-back" onclick="rsbClosePanel()"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <span class="rsb-panel-title">Regenerate</span>
+    </div>
+    <div class="rsb-panel-content">
+      <div><div class="rsb-sugg-lbl">Choose action</div><div class="rsb-sugg-items">
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Regenerate this section with fresh content')">↻ This section</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Regenerate the entire page from scratch')">↻ Entire page</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Keep layout but rewrite all copy')">✎ Rewrite copy</button>
+        <button class="rsb-sugg-btn" onclick="rsbQuick('Change the layout structure entirely')">⟹ New structure</button>
+      </div></div>
+    </div>
+    <div class="rsb-panel-action"><button class="rsb-action-btn" onclick="rsbExecuteAction('Reimagining your content…')">Start regeneration</button></div>
+  </div>
+  <div class="rsb-chat" id="rsbChat">
+    <div class="rsb-bubble-row">
+      <div class="rsb-avatar"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+      <div class="rsb-bubble ai">Your D'Palace page is ready. I see opportunities to strengthen the copy and refine your call-to-action. What should we improve first?</div>
+    </div>
+  </div>
+  </div>
+  <div class="rsb-footer">
+    <div class="rsb-input-wrap">
+      <textarea class="rsb-textarea" id="rsbInput" placeholder="Ask ERA AI anything…" rows="1" onkeydown="rsbKey(event)" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button class="rsb-send-btn" onclick="rsbSend()"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+    </div>
+  </div>
+</div>
+<button class="rsb-fab" id="rsbFab" onclick="rsbOpen()" title="Open ERA AI"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></button>
+
+<script>
+
+// ── RIGHT AI SIDEBAR ──
+function rsbOpen(){document.getElementById('rsb').classList.remove('hidden');document.getElementById('rsbFab').classList.remove('visible');}
+function rsbClose(){document.getElementById('rsb').classList.add('hidden');document.getElementById('rsbFab').classList.add('visible');rsbCloseMenu();}
+function rsbToggleMenu(e){e.stopPropagation();document.getElementById('rsbMenu').classList.toggle('open');}
+function rsbCloseMenu(){var m=document.getElementById('rsbMenu');if(m)m.classList.remove('open');}
+function rsbMenuAct(t){
+  rsbCloseMenu();
+  if(t==='new'){document.getElementById('rsbChat').innerHTML='<div class="rsb-bubble-row"><div class="rsb-avatar"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="rsb-bubble ai">Fresh start. What would you like to create or refine?</div></div>';}
+  else if(t==='popout'){document.getElementById('rsb').classList.add('floating');}
+  else if(t==='dock'){document.getElementById('rsb').classList.remove('floating');}
+}
+function rsbQuick(msg){
+  const btn=event.target;
+  const origText=btn.textContent;
+  btn.disabled=true;
+  btn.style.opacity='0.6';
+  rsbAddMsg(msg,'user');
+  setTimeout(function(){
+    const responses={'Strengthen':['Analyzing your copy for impact and clarity…','Refining tone and language strength.'],'Add':['Creating a high-converting section…','Crafting new content that drives action.'],'Optimize':['Scanning for SEO improvements…','Enhancing your search visibility.'],'Polish':['Elevating your brand voice…','Making your message resonate.'],'Regenerate':['Reimagining your entire page…','Creating a fresh variation.']};
+    let resp='On it! Making those changes…';
+    for(let key of Object.keys(responses)){if(msg.includes(key)){resp=responses[key][Math.floor(Math.random()*responses[key].length)];break;}}
+    rsbAddMsg(resp,'ai');
+    btn.disabled=false;
+    btn.style.opacity='1';
+  },600);
+  if(typeof showGen==='function')showGen('AI: "'+msg+'"','ERA AI is refining your page');
+}
+function rsbSend(){var i=document.getElementById('rsbInput');var v=i.value.trim();if(!v)return;rsbAddMsg(v,'user');i.value='';i.style.height='auto';setTimeout(function(){rsbAddMsg('Processing your request…','ai');},500);if(typeof showGen==='function')showGen('AI: "'+v+'"','ERA AI is working on your page');}
+function rsbAddMsg(text,role){var c=document.getElementById('rsbChat');if(role==='ai'){c.innerHTML+='<div class="rsb-bubble-row"><div class="rsb-avatar"><svg width="10" height="10" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div><div class="rsb-bubble ai">'+text+'</div></div>';}else{c.innerHTML+='<div style="display:flex;justify-content:flex-end;margin:2px 0"><div class="rsb-bubble user">'+text+'</div></div>';}c.scrollTop=c.scrollHeight;}
+function rsbKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();rsbSend();}}
+document.addEventListener('click',function(e){if(!e.target.closest('#rsbDotBtn')&&!e.target.closest('#rsbMenu'))rsbCloseMenu();});
+
+// ── SECTION PICKER ──
+function rsbShowSectionPicker(){document.getElementById('rsbActions').style.display='none';document.getElementById('rsbPicker').style.display='flex';}
+function rsbCloseSectionPicker(){document.getElementById('rsbPicker').style.display='none';document.getElementById('rsbActions').style.display='flex';}
+function rsbSetCat(cat,btn){
+  document.querySelectorAll('.rsb-cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('rsbSearchInp').value='';
+  document.querySelectorAll('#rsbGrid .rsb-sec-card').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'flex':'none';
+  });
+}
+function rsbFilter(q){
+  const v=q.toLowerCase().trim();
+  document.querySelectorAll('#rsbGrid .rsb-sec-card').forEach(c=>{
+    c.style.display=(!v||c.textContent.toLowerCase().includes(v))?'flex':'none';
+  });
+  if(v){document.querySelectorAll('.rsb-cat-btn').forEach(b=>b.classList.remove('active'));}
+  else{document.querySelector('.rsb-cat-btn').classList.add('active');}
+}
+function rsbAddSec(type,name){rsbCloseSectionPicker();const sec=document.createElement('div');sec.className='psec';sec.id='sec-'+type;sec.innerHTML='<div class="psec-ring"></div><div class="sec-lbl">'+name+'</div><div style="min-height:200px;padding:20px;background:#f9f9f9;border-radius:8px;text-align:center;color:#999;">'+name+' section</div>';const canvas=document.getElementById('canvasFrame');canvas.appendChild(sec);toast('✓',name+' added','ok');}
+
+// ── WORKFLOW PANELS ──
+function rsbShowPanel(type){document.getElementById('rsbActions').style.display='none';document.getElementById('rsbPicker').style.display='none';document.querySelectorAll('.rsb-panel').forEach(p=>p.classList.remove('active'));document.getElementById('rsbPanel'+type.charAt(0).toUpperCase()+type.slice(1)).classList.add('active');}
+function rsbClosePanel(){document.querySelectorAll('.rsb-panel').forEach(p=>p.classList.remove('active'));document.getElementById('rsbPicker').style.display='none';document.getElementById('rsbActions').style.display='flex';}
+function rsbSelectChip(e){e.target.parentElement.querySelectorAll('.rsb-chip').forEach(c=>c.classList.remove('selected'));e.target.classList.add('selected');}
+function rsbExecuteAction(msg){
+  const btn=event.target;
+  const origText=btn.textContent;
+  btn.classList.add('loading');
+  btn.disabled=true;
+  btn.innerHTML='<span class="rsb-qa-spinner"></span>&nbsp;Processing…';
+  rsbClosePanel();
+  rsbAddMsg(msg,'ai');
+  if(typeof showGen==='function')showGen('AI: "'+msg+'"','ERA AI is working on your page');
+  setTimeout(function(){
+    btn.classList.remove('loading');
+    btn.disabled=false;
+    btn.textContent=origText;
+  },2200);
+}
+
+
+</script>
+</body>
+</html>

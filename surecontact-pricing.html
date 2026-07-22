@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SureContact Pricing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ── SureContact brand: Figtree · purple #8345DD · orange #FF5B04 · ink #18181B ── */
+  :root{
+    --bg:#FAF8FE;--card:#FFF;--line:#ECE7F3;--line-soft:#F5F1FB;--ink:#18181B;
+    --muted:#6B6779;--muted-dk:#4B4857;--off:#8E8A9C;
+    --primary:#8345DD;--primary-dk:#6B2CC7;--primary-soft:#F3ECFD;
+    --accent:#FF5B04;--accent-dk:#C7450A;--accent-soft:#FFF0E8;--radius:16px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;padding:40px 20px 70px}
+  .wrap{max-width:1080px;margin:0 auto}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  :focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:4px}
+  .num{font-variant-numeric:tabular-nums}
+  .head{text-align:center;margin-bottom:22px}
+  .head .kicker{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);margin-bottom:10px}
+  .head h1{font-size:38px;line-height:1.12;letter-spacing:-.02em;margin-bottom:9px;font-weight:800}
+  .head p{color:var(--muted);font-size:16px}
+
+  /* config bar — Subscription Term (Annual | Lifetime) + Number of Sites (3 | 30) */
+  .configbar{display:flex;justify-content:center;align-items:stretch;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 12px;max-width:640px;margin:0 auto;box-shadow:0 4px 18px rgba(131,69,221,.06)}
+  .cfg{flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 22px}
+  .cfg + .cfg{border-left:1px solid var(--line)}
+  .cfg-label{font-size:13px;font-weight:700;color:var(--muted-dk);white-space:nowrap}
+  .seg{display:inline-flex;background:#F1ECF9;border-radius:999px;padding:3px;gap:2px}
+  .seg button{border:0;background:transparent;cursor:pointer;padding:9px 20px;border-radius:999px;font-size:14px;font-weight:600;color:var(--muted);font-family:inherit;transition:.15s;white-space:nowrap}
+  .seg button:hover{color:var(--ink)}
+  .seg button[aria-checked="true"]{background:var(--primary);color:#fff}
+  .seg button[disabled]{opacity:.38;cursor:not-allowed}
+  .seg button[disabled]:hover{color:var(--muted)}
+  .pill{background:var(--accent-soft);color:var(--accent-dk);font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;margin-left:6px}
+  .seg button[aria-checked="true"] .pill{background:rgba(255,255,255,.22);color:#fff}
+  .cfgnote{font-size:10.5px;color:var(--muted);min-height:13px}
+  .guarantee{text-align:center;color:var(--muted);font-size:13px;margin:18px 0 24px}
+
+  .cards{display:grid;gap:18px;align-items:stretch;grid-template-columns:repeat(3,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;position:relative;display:flex;flex-direction:column}
+  /* Pro is the RECOMMENDED (highlighted) plan */
+  .card.pop{border:1px solid #D7C2F4;background:linear-gradient(180deg,#FBF7FF 0%,#FFFEFF 340px);box-shadow:0 14px 44px rgba(131,69,221,.16)}
+  .badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--primary);color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.06em;padding:7px 16px;border-radius:999px;white-space:nowrap;box-shadow:0 4px 12px rgba(107,44,199,.3)}
+  .pname{font-size:19px;font-weight:700;letter-spacing:-.01em}
+  .ptag{color:var(--muted);font-size:13px;margin-top:5px;min-height:38px;line-height:1.4}
+  .price{display:flex;align-items:baseline;gap:8px;margin-top:14px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+  .was{font-size:17px;font-weight:600;color:#9A96A6;text-decoration:line-through}
+  .amt{font-size:36px;font-weight:800;letter-spacing:-.03em}
+  .per{color:var(--muted);font-size:14px;font-weight:600}
+  .save{display:inline-block;margin-top:8px;background:var(--accent-soft);color:var(--accent-dk);font-size:11.5px;font-weight:800;padding:4px 9px;border-radius:999px;align-self:flex-start}
+  .save.hide{visibility:hidden}
+  .subline{font-size:12.5px;margin-top:8px;min-height:17px;color:var(--muted)}
+  .cta{display:block;width:100%;text-align:center;margin-top:14px;padding:14px 16px;border-radius:10px;font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;border:1.5px solid #DBD4E8;background:#fff;color:var(--ink)}
+  .cta:hover{border-color:var(--ink);background:#FAF8FE}
+  .cta.mid{border-color:var(--primary);color:var(--primary-dk);background:#fff}
+  .cta.mid:hover{background:var(--primary-soft)}
+  .card.pop .cta{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 14px rgba(107,44,199,.25)}
+  .card.pop .cta:hover{filter:brightness(1.07)}
+
+  .feats{margin-top:18px;border-top:1px solid var(--line-soft);padding-top:16px}
+  .cardfoot{margin-top:22px}
+  .grp{font-size:14.5px;font-weight:700;color:var(--ink);margin:20px 0 10px}
+  .grp:first-child{margin-top:0}
+  ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  li{display:flex;gap:10px;font-size:14px;line-height:1.45;color:#3A3743;align-items:flex-start}
+  li .mk{font-weight:800;flex:0 0 13px;font-size:12.5px;line-height:1.55}
+  li.on .mk{color:var(--primary)}
+  li.off{color:var(--off)}
+  li.off .mk{color:#C9C2D8}
+  .ftxt{flex:1;min-width:0}
+
+  /* feature tooltips — hover/focus, like the SureContact pricing page */
+  .tip{position:relative;display:inline-block;margin-left:5px;vertical-align:-1px;cursor:help}
+  .ti{width:13px;height:13px;color:#B7B0C7;display:block}
+  .tip:hover .ti,.tip:focus-visible .ti{color:var(--primary)}
+  .bubble{position:absolute;bottom:calc(100% + 9px);left:50%;transform:translateX(-50%) translateY(3px);width:184px;background:var(--ink);color:#fff;font-size:11.5px;font-weight:400;line-height:1.45;padding:9px 11px;border-radius:8px;opacity:0;visibility:hidden;transition:.14s;z-index:30;box-shadow:0 8px 24px rgba(24,24,27,.28);text-align:left;white-space:normal;letter-spacing:0}
+  .bubble::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink)}
+  .tip:hover .bubble,.tip:focus .bubble,.tip:focus-within .bubble{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+  @media(max-width:880px){.cards{grid-template-columns:1fr;max-width:410px;margin:0 auto}.head h1{font-size:28px}}
+  @media(max-width:760px){.configbar{flex-direction:column;gap:18px;padding:18px;max-width:340px}.cfg + .cfg{border-left:0;border-top:1px solid var(--line);padding-top:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">From the team behind Astra, SureCart &amp; more</div>
+    <h1>Simple pricing that scales with you</h1>
+    <p>Email marketing &amp; CRM, built for WordPress.</p>
+  </div>
+
+  <div class="configbar">
+    <div class="cfg">
+      <span class="cfg-label" id="lt">Subscription Term</span>
+      <div class="seg" id="billing" role="radiogroup" aria-labelledby="lt">
+        <button type="button" role="radio" aria-checked="true" data-b="annual">Annual</button>
+        <button type="button" role="radio" aria-checked="false" data-b="lifetime">Lifetime</button>
+      </div>
+      <span class="cfgnote"></span>
+    </div>
+    <div class="cfg" id="cfgSites">
+      <span class="cfg-label" id="ls">Number of Sites</span>
+      <div class="seg" id="sites" role="radiogroup" aria-labelledby="ls">
+        <button type="button" role="radio" aria-checked="true" data-s="3">3</button>
+        <button type="button" role="radio" aria-checked="false" data-s="30">30</button>
+      </div>
+      <span class="cfgnote" id="sitesNote"></span>
+    </div>
+  </div>
+
+  <div class="guarantee">✓ 14-day money-back guarantee · Migration call included · All prices in USD</div>
+  <div class="sr-only" aria-live="polite" id="announce"></div>
+
+  <div class="cards">
+
+    <div class="card">
+      <h2 class="pname">SureContact Starter</h2>
+      <p class="ptag">Best for solo creators and small teams getting going</p>
+      <div class="price"><span class="was" id="stWas">$299</span><span class="amt" id="stAmt">$149</span><span class="per" id="stPer">/yr</span></div>
+      <span class="save" id="stSave">Save $150</span>
+      <div class="subline" id="stSub">Renews at $299/yr</div>
+      <button class="cta">Get Starter</button>
+      <div class="feats" id="fStarter"></div>
+      <div class="cardfoot" id="footStarter"></div>
+    </div>
+
+    <div class="card pop">
+      <div class="badge">★ RECOMMENDED</div>
+      <h2 class="pname">SureContact Pro</h2>
+      <p class="ptag">Best for growing businesses and busy agencies</p>
+      <div class="price"><span class="was" id="proWas">$799</span><span class="amt" id="proAmt">$399</span><span class="per" id="proPer">/yr</span></div>
+      <span class="save" id="proSave">Save $400</span>
+      <div class="subline" id="proSub">Renews at $799/yr</div>
+      <button class="cta">Get Pro</button>
+      <div class="feats" id="fPro"></div>
+      <div class="cardfoot" id="footPro"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="pname">SureContact Business</h2>
+      <p class="ptag">Best for established brands and larger teams</p>
+      <div class="price"><span class="was" id="bizWas">$1,999</span><span class="amt" id="bizAmt">$999</span><span class="per" id="bizPer">/yr</span></div>
+      <span class="save" id="bizSave">Save $1,000</span>
+      <div class="subline" id="bizSub">Renews at $1,999/yr</div>
+      <button class="cta mid">Get Business</button>
+      <div class="feats" id="fBusiness"></div>
+      <div class="cardfoot" id="footBusiness"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── features across 3 categories · columns: Starter, Pro, Business ──
+   rows: [name, starter, pro, business, tooltip]
+   Tiered for testing: Starter ≈ 40% (5/12) · Pro ≈ 70% (8/12) · Business = 100% */
+const FEATURES=[
+  ["Campaigns &amp; Contacts",[
+    ["Unlimited contacts &amp; lists",1,1,1,"Add as many contacts and lists as you like — no per-contact limits on any plan."],
+    ["Drag &amp; drop email builder",1,1,1,"Design emails visually with blocks. No code or designer needed."],
+    ["A/B testing on subject &amp; content",0,1,1,"Split-test subject lines or content and auto-send the winning version."],
+    ["AI template generator",0,0,1,"Describe your email and let AI draft a ready-to-edit template in seconds."]
+  ]],
+  ["Automations &amp; Sending",[
+    ["Bring your own SMTP · unlimited sends",1,1,1,"Connect your own SMTP (like Amazon SES) and send unlimited emails at cost."],
+    ["Visual automation builder",1,1,1,"Build multi-step flows on a visual canvas with triggers, waits and tags."],
+    ["Conditional splits &amp; goals",0,1,1,"Branch automations by condition and set goals to measure what converts."],
+    ["Send-time optimisation",0,0,1,"Deliver each email when a contact is most likely to open it, per timezone."]
+  ]],
+  ["Forms &amp; Landing Pages",[
+    ["Native opt-in forms &amp; popups",1,1,1,"Capture leads with built-in forms and popups — no separate plugin needed."],
+    ["Landing page builder",0,1,1,"Publish standalone landing pages that feed straight into your automations."],
+    ["Store, course &amp; form triggers",0,0,1,"Start flows from WooCommerce orders, course activity or form submissions."],
+    ["Reporting &amp; performance insights",0,0,1,"Track opens, clicks and revenue per campaign and per contact."]
+  ]]
+];
+
+function listFor(i){
+  return FEATURES.map(([g,rows])=>{
+    const items=rows.map(r=>{
+      const on=r[i], tip=r[4]||"";
+      return `<li class="${on?'on':'off'}"><span class="mk" aria-hidden="true">${on?'✓':'✕'}</span>
+      <span class="ftxt">${r[0]}<span class="tip" tabindex="0" role="note" aria-label="${tip}">
+        <svg class="ti" viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><circle cx="8" cy="8" r="6.3"/><path d="M8 7.4v3.1"/><circle cx="8" cy="5.1" r=".9" fill="currentColor" stroke="none"/></svg>
+        <span class="bubble">${tip}</span></span></span>
+      <span class="sr-only">${on?'included':'not included'}</span></li>`;
+    }).join("");
+    return `<div class="grp">${g}:</div><ul>${items}</ul>`;
+  }).join("");
+}
+function footFor(support){
+  return `<div class="grp">Peace of Mind:</div>
+  <ul>
+    <li class="on"><span class="mk" aria-hidden="true">✓</span><span class="ftxt">${support}</span></li>
+    <li class="on"><span class="mk" aria-hidden="true">✓</span><span class="ftxt">14-day money-back guarantee</span></li>
+  </ul>`;
+}
+document.getElementById("fStarter").innerHTML  = listFor(1);
+document.getElementById("fPro").innerHTML      = listFor(2);
+document.getElementById("fBusiness").innerHTML = listFor(3);
+document.getElementById("footStarter").innerHTML  = footFor("Standard support");
+document.getElementById("footPro").innerHTML      = footFor("Priority support");
+document.getElementById("footBusiness").innerHTML = footFor("Priority support · migration call");
+
+/* ── pricing (test figures, SureContact-inspired) ── */
+const D={
+  annual:{
+    "3": {starter:{was:299,now:149,save:150}, pro:{was:799,now:399,save:400}, business:{was:1999,now:999,save:1000}},
+    "30":{starter:{was:499,now:249,save:250}, pro:{was:1199,now:599,save:600}, business:{was:2999,now:1499,save:1500}}
+  },
+  lifetime:{
+    // real SureContact lifetime: 10k → $399 (was $999), 30k → $699 (was $2,999).
+    // Business has no real lifetime tier — extrapolated.
+    "30":{starter:{was:999,now:399,save:600}, pro:{was:2999,now:699,save:2300}, business:{was:3999,now:999,save:3000}}
+  }
+};
+const PLANS=[["st","starter"],["pro","pro"],["biz","business"]];
+let st={b:"annual",s:"3"};
+const $=id=>document.getElementById(id), M=n=>"$"+n.toLocaleString();
+
+function render(){
+  const life=st.b==="lifetime", sites=life?"30":st.s;
+  const d=life?D.lifetime["30"]:D.annual[sites];
+
+  // lifetime is 30-site only — keep the toggle visible, disable the "3" option
+  if(life){
+    $("sitesNote").textContent="30 sites · included with Lifetime";
+    [...$("sites").children].forEach(b=>{
+      const on=b.dataset.s==="30";
+      b.setAttribute("aria-checked", on?"true":"false");
+      if(on) b.removeAttribute("disabled"); else b.setAttribute("disabled","");
+    });
+  }else{
+    $("sitesNote").textContent="";
+    [...$("sites").children].forEach(b=>{
+      b.removeAttribute("disabled");
+      b.setAttribute("aria-checked", b.dataset.s===sites?"true":"false");
+    });
+  }
+
+  PLANS.forEach(([k,key])=>{
+    const v=d[key];
+    $(k+"Was").textContent=M(v.was);
+    $(k+"Amt").textContent=M(v.now);
+    $(k+"Per").textContent=life?"once":"/yr";
+    $(k+"Save").textContent="Save "+M(v.save);
+    $(k+"Sub").textContent = life ? "One-time payment · pay once" : "Renews at "+M(v.was)+"/yr";
+  });
+  $("announce").textContent=`${life?"Lifetime":"Annual"}, ${sites} sites. Starter ${M(d.starter.now)}. Pro ${M(d.pro.now)}. Business ${M(d.business.now)}.`;
+}
+$("billing").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  st.b=b.dataset.b;[...e.currentTarget.children].forEach(x=>x.setAttribute("aria-checked",x===b?"true":"false"));render();});
+$("sites").addEventListener("click",e=>{const b=e.target.closest("button");if(!b||b.hasAttribute("disabled"))return;
+  st.s=b.dataset.s;render();});
+render();
+</script>
+</body>
+</html>
